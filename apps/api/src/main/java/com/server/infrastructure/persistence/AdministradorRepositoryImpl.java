@@ -3,6 +3,7 @@ package com.server.infrastructure.persistence;
 import com.server.domain.repository.AdministradorRepository;
 import com.server.domain.model.Administrador;
 import com.server.infrastructure.persistence.jpa.AdministradorJpaRepository;
+
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
