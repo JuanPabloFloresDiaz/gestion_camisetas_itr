@@ -5,6 +5,7 @@ import com.server.domain.model.Administrador;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,14 +37,14 @@ public class AdministradorController {
 
     // Crear un administrador
     @PostMapping
-    public ResponseEntity<Administrador> save(@RequestBody Administrador administrador) {
+    public ResponseEntity<Administrador> save(@Valid @RequestBody Administrador administrador) {
         Administrador savedAdministrador = administradorService.save(administrador);
         return new ResponseEntity<>(savedAdministrador, HttpStatus.CREATED);
     }
 
     // Actualizar un administrador
     @PutMapping("/{id}")
-    public ResponseEntity<Administrador> update(@PathVariable UUID id, @RequestBody Administrador administrador) {
+    public ResponseEntity<Administrador> update(@PathVariable UUID id, @Valid @RequestBody Administrador administrador) {
         administrador.setId(id); // Asegúrate de que el ID coincida
         Administrador updatedAdministrador = administradorService.update(administrador);
         return new ResponseEntity<>(updatedAdministrador, HttpStatus.OK);

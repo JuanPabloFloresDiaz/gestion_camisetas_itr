@@ -2,6 +2,7 @@ package com.server.domain.model;
 
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class Pedido extends BaseEntity {
         Cancelado
     }
 
+    @NotNull(message = "El estado del pedido es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_pedido", columnDefinition = "estado_pedido_enum DEFAULT 'Pendiente'")
     private EstadoPedido estadoPedido = EstadoPedido.Pendiente;
@@ -28,10 +30,12 @@ public class Pedido extends BaseEntity {
     @Column(name = "fecha_pedido")
     private LocalDateTime fechaPedido;
 
-    @Column(name = "direccion_pedido", length = 50)
+    @Size(max = 200, message = "La dirección del pedido no puede tener más de 200 caracteres")
+    @Column(name = "direccion_pedido", length = 200)
     private String direccionPedido;
 
     // Relación con Cliente
+    @NotNull(message = "El cliente es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_carrito_del_cliente"))
     private Cliente cliente;

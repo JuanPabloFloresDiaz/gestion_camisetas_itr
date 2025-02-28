@@ -2,6 +2,7 @@ package com.server.domain.model;
 
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,10 +13,12 @@ import lombok.EqualsAndHashCode;
 
 public class DetalleCamisa extends BaseEntity{
         // Relación con Camisa
+        @NotNull(message = "La camisa es obligatoria")
         @ManyToOne
         @JoinColumn(name = "id_camisa", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_detalle_de_camisa"), nullable = false)
         private Camisa camisa;
         // Relación con Talla
+        @NotNull(message = "La talla es obligatoria")
         @ManyToOne
         @JoinColumn(name = "id_talla", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_talla_de_camisa"), nullable = false)
         private Talla talla;
