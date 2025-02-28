@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/camisas")
+@RequestMapping("/api/tipo-camisas")
 public class TipoCamisaController {
         private final TipoCamisaService tipoCamisaService;
 

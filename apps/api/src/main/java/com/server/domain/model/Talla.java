@@ -2,6 +2,7 @@ package com.server.domain.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -22,6 +23,7 @@ public class Talla extends BaseEntity{
 
     // Relación inversa: Una talla puede estar en muchos detalles de camisas	
     @OneToMany(mappedBy = "talla", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DetalleCamisa> detallesCamisas;
 
     public String getNombre() {

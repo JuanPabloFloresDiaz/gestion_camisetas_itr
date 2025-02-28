@@ -1,5 +1,8 @@
 package com.server.domain.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.*;
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -47,6 +50,11 @@ public class Cliente extends BaseEntity {
     @Size(max = 100, message = "La dirección no puede tener más de 100 caracteres")
     @Column(name = "direccion_cliente", length = 100)
     private String direccion;
+
+    // Relación con Pedido
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Pedido> pedidos;
 
     public String getNombre() {
         return nombre;

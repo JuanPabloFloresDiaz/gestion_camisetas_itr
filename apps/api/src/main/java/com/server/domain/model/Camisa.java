@@ -1,5 +1,6 @@
 package com.server.domain.model;
 
+import com.fasterxml.jackson.annotation.*;
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -50,17 +51,20 @@ public class Camisa extends BaseEntity {
     // Relación con Administrador
     @NotNull(message = "El administrador es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference 
     @JoinColumn(name = "id_administrador", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_administrador_de_camisa"))
     private Administrador administrador;
 
     // Relación con TipoCamisa
     @NotNull(message = "El tipo de camisa es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference 
     @JoinColumn(name = "id_tipo_camisa", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tipo_de_camisa_producto"))
     private TipoCamisa tipoCamisa;
 
     // Relación con DetalleCamisa
     @OneToMany(mappedBy = "camisa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DetalleCamisa> detallesCamisa;
     
     // Getters y Setters

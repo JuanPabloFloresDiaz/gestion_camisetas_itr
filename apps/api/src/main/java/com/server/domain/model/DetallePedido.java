@@ -1,5 +1,6 @@
 package com.server.domain.model;
 
+import com.fasterxml.jackson.annotation.*;
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -29,12 +30,14 @@ public class DetallePedido extends BaseEntity {
     // Relación con Pedido
     @NotNull(message = "El pedido es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference 
     @JoinColumn(name = "id_pedido", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_detalles_pedido"))
     private Pedido pedido;
 
     // Relación con DetalleCamisa
     @NotNull(message = "El detalle de la camisa es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference 
     @JoinColumn(name = "id_detalle_camisa", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_detalle_camisa_pedido"))
     private DetalleCamisa detalleCamisa;
 }

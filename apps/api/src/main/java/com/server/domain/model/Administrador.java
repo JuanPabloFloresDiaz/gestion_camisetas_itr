@@ -2,6 +2,7 @@ package com.server.domain.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.server.domain.common.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -77,6 +78,7 @@ public class Administrador extends BaseEntity {
 
     // Relación inversa: Un administrador puede tener muchas camisas
     @OneToMany(mappedBy = "administrador", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Camisa> camisas;
 
     public String getNombre() {

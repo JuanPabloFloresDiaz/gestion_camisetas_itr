@@ -1,5 +1,6 @@
 package com.server.domain.model;
 
+import com.fasterxml.jackson.annotation.*;
 import com.server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -37,10 +38,12 @@ public class Pedido extends BaseEntity {
     // Relación con Cliente
     @NotNull(message = "El cliente es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference 
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_carrito_del_cliente"))
     private Cliente cliente;
 
     // Relación inversa: Un pedido puede tener muchos detalles
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DetallePedido> detallesPedidos;
 }
