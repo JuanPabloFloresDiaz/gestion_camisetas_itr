@@ -6,7 +6,7 @@ import Link from "next/link";
 export function CustomSidebar() {
   return (
     <aside className="w-64 bg-white shadow-md p-4">
-      <h2 className="text-lg font-semibold mb-4">ITR-TeeVista</h2>
+      <h2 className="text-lg font-semibold mb-4">ITR-TeeManager</h2>
       <nav className="space-y-2">
         <Link href="/main/dashboard">
           <div className="w-full p-2 rounded-md hover:bg-gray-100 transition-colors">
