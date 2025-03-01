@@ -1,17 +1,38 @@
-// src/views/Admin.tsx
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getAdministradores } from "@/services/administradores.service";
+import { Administrador } from "@/services/administradores.service"; // Importa la interfaz Administrador
 
 export default function Admin() {
-  // Datos de ejemplo para la tabla
-  const admins = [
-    { id: 1, usuario: "admin1", licencia: "123456", tipoTransporte: "Automóvil", nacionalidad: "Mexicana" },
-    { id: 2, usuario: "admin2", licencia: "654321", tipoTransporte: "Motocicleta", nacionalidad: "Colombiana" },
-    { id: 3, usuario: "admin3", licencia: "987654", tipoTransporte: "Bicicleta", nacionalidad: "Argentina" },
-  ];
+  // Usar TanStack Query para obtener los administradores
+  const { data: admins, isLoading, isError } = useQuery({
+    queryKey: ["administradores"], // Clave única para la consulta
+    queryFn: getAdministradores, // Función que obtiene los datos
+  });
+
+  // Mostrar un mensaje de carga mientras se obtienen los datos
+  if (isLoading) {
+    return (
+      <div className="p-6 bg-white text-gray-900 min-h-screen">
+        <h1 className="text-2xl font-bold mb-6">Gestión de Administradores</h1>
+        <p>Cargando administradores...</p>
+      </div>
+    );
+  }
+
+  // Mostrar un mensaje de error si la consulta falla
+  if (isError) {
+    return (
+      <div className="p-6 bg-white text-gray-900 min-h-screen">
+        <h1 className="text-2xl font-bold mb-6">Gestión de Administradores</h1>
+        <p className="text-red-500">Error al cargar los administradores.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white text-gray-900 min-h-screen">
@@ -35,20 +56,20 @@ export default function Admin() {
         <Table>
           <TableHeader>
             <TableRow className="bg-blue-800 hover:bg-gray-900">
-              <TableHead className="text-white">Usuario</TableHead>
-              <TableHead className="text-white">Licencia de conducción</TableHead>
-              <TableHead className="text-white">Tipo de transporte</TableHead>
-              <TableHead className="text-white">Nacionalidad</TableHead>
+              <TableHead className="text-white">Nombre</TableHead>
+              <TableHead className="text-white">Apellido</TableHead>
+              <TableHead className="text-white">Correo</TableHead>
+              <TableHead className="text-white">Teléfono</TableHead>
               <TableHead className="text-white">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {admins.map((admin) => (
+            {admins?.map((admin: Administrador) => ( // Tipa explícitamente "admin"
               <TableRow key={admin.id} className="hover:bg-gray-100">
-                <TableCell>{admin.usuario}</TableCell>
-                <TableCell>{admin.licencia}</TableCell>
-                <TableCell>{admin.tipoTransporte}</TableCell>
-                <TableCell>{admin.nacionalidad}</TableCell>
+                <TableCell>{admin.nombre}</TableCell>
+                <TableCell>{admin.apellido}</TableCell>
+                <TableCell>{admin.correo}</TableCell>
+                <TableCell>{admin.telefono}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
                     <Button

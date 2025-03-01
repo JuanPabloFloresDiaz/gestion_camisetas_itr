@@ -1,8 +1,7 @@
 // src/hooks/AxiosRequest.ts
 import axios, { AxiosRequestConfig, Method } from 'axios';
-import ENV from '@/utils/env';
 
-const SERVER_URL = ENV.SERVER_URL;
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 /**
  * Función asíncrona para realizar peticiones al servidor utilizando Axios y enviando datos como `form-data`.

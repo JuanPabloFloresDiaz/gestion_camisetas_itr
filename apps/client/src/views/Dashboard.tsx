@@ -86,7 +86,7 @@ export default function DashboardPage() {
                     <CardTitle>Ventas Mensuales</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <LineChart width={600} height={300} data={salesData}>
+                    <LineChart width={800} height={400} data={salesData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
