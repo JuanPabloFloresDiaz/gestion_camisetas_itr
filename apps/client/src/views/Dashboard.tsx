@@ -35,7 +35,7 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Dashboard</h1>
-                <Button>Nuevo Pedido</Button>
+                <Button className="bg-blue-800 hover:bg-gray-900">Nuevo Pedido</Button>
             </div>
 
             {/* Sección de métricas */}

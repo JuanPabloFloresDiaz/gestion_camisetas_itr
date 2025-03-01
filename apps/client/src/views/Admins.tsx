@@ -24,7 +24,7 @@ export default function Admin() {
           placeholder="Buscar administrador..."
           className="w-1/2"
         />
-        <Button className="bg-blue-800 text-white hover:bg-blue-900">
+        <Button className="bg-blue-800 text-white hover:bg-gray-900">
           <span className="material-icons mr-2">add</span>
           Agregar
         </Button>
@@ -34,7 +34,7 @@ export default function Admin() {
       <div className="rounded-lg shadow-lg overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-800">
+            <TableRow className="bg-blue-800 hover:bg-gray-900">
               <TableHead className="text-white">Usuario</TableHead>
               <TableHead className="text-white">Licencia de conducción</TableHead>
               <TableHead className="text-white">Tipo de transporte</TableHead>
