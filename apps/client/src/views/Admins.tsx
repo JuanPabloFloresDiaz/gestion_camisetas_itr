@@ -15,9 +15,15 @@ import {
 } from "@/components/ui/pagination"; // Importar componentes de Pagination
 import { getAdministradores } from "@/services/administradores.service";
 import { Administrador } from "@/services/administradores.service"; // Importa la interfaz Administrador
+import CreateAdminModal from "@/components/Modals/Admin/CreateAdmin";
+import UpdateAdminModal from "@/components/Modals/Admin/UpdateAdmin";
+import DeleteAdminModal from "@/components/Modals/Admin/DeleteAdmin";
 
 export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState<string | null>(null);
+
   const itemsPerPage = 5; // Número de elementos por página
 
   // Usar TanStack Query para obtener los administradores
@@ -34,6 +40,16 @@ export default function Admin() {
     ? admins.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : [];
 
+  const handleDeleteClick = (adminId: string) => {
+    setAdminToDelete(adminId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setAdminToDelete(null);
+  };
+  
   // Mostrar un mensaje de carga mientras se obtienen los datos
   if (isLoading) {
     return (
@@ -81,10 +97,7 @@ export default function Admin() {
             <span className="material-icons">search</span>
           </span>
         </div>
-        <Button className="bg-blue-800 text-white hover:bg-gray-900">
-          <span className="material-icons mr-2">add</span>
-          Agregar
-        </Button>
+        <CreateAdminModal />
       </div>
 
       {/* Tabla de administradores */}
@@ -108,17 +121,11 @@ export default function Admin() {
                 <TableCell>{admin.telefono}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      className="text-yellow-400 hover:bg-yellow-400 hover:text-white"
-                      onClick={() => console.log(`Actualizar admin ${admin.id}`)}
-                    >
-                      <span className="material-icons">edit</span>
-                    </Button>
+                    <UpdateAdminModal admin={admin} />
                     <Button
                       variant="ghost"
                       className="text-red-400 hover:bg-red-400 hover:text-white"
-                      onClick={() => console.log(`Eliminar admin ${admin.id}`)}
+                      onClick={() => handleDeleteClick(admin.id)}
                     >
                       <span className="material-icons">delete</span>
                     </Button>
@@ -161,6 +168,9 @@ export default function Admin() {
           </PaginationContent>
         </Pagination>
       </div>
+      {deleteModalOpen && adminToDelete && (
+        <DeleteAdminModal adminId={adminToDelete} onClose={handleCloseDeleteModal} />
+      )}
     </div>
   );
 }

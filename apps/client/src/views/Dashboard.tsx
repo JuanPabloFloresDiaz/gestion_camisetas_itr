@@ -31,10 +31,13 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-blue-900">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Dashboard</h1>
+                <h1 className="text-2xl font-bold mb-6 flex items-center">
+                    <span className="material-icons mr-2">settings</span>
+                    Dashboard
+                </h1>
                 <Button className="bg-blue-800 hover:bg-gray-900">Nuevo Pedido</Button>
             </div>
 

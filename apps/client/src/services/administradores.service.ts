@@ -34,7 +34,7 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
 };
 
 // Crear un administrador
-export const createAdministrador = async (payload: Administrador) => {
+export const createAdministrador = async (payload: Omit<Administrador, "id">) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
@@ -49,7 +49,7 @@ export const getAdministrador = async (id: string) => {
 };
 
 // Actualizar un administrador
-export const updateAdministrador = async (id: string, payload: Administrador) => {
+export const updateAdministrador = async (id: string, payload: Omit<Administrador, "clave">) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('U'), payload);
 };
 
