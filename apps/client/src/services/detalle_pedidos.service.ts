@@ -3,7 +3,7 @@ import { Method } from 'axios';
 
 const RESOURCE = 'detail-pedidos';
 
-interface DetallePedido {
+export interface DetallePedido {
   id: string;
   precioProducto: Number;
   cantidadComprada: Number;

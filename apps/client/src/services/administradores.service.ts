@@ -3,7 +3,7 @@ import { Method } from 'axios';
 
 const RESOURCE = 'administradores';
 
-interface Administrador {
+export interface Administrador {
   id: string;
   nombre: string;
   apellido: string;

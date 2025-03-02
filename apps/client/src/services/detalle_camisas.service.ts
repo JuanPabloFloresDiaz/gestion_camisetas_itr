@@ -3,7 +3,7 @@ import { Method } from 'axios';
 
 const RESOURCE = 'detail-camisas';
 
-interface DetalleCamisa {
+export interface DetalleCamisa {
   id: string;
   camisa: string;
   talla: string;
