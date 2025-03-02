@@ -3,6 +3,7 @@ package com.server.api.controller;
 import com.server.application.service.AdministradorService;
 import com.server.domain.model.Administrador;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -36,15 +37,17 @@ public class AdministradorController {
     }
 
     // Crear un administrador
-    @PostMapping
+    @PostMapping(consumes = "application/json;charset=UTF-8", // Acepta application/json;charset=UTF-8
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Administrador> save(@Valid @RequestBody Administrador administrador) {
         Administrador savedAdministrador = administradorService.save(administrador);
         return new ResponseEntity<>(savedAdministrador, HttpStatus.CREATED);
     }
 
     // Actualizar un administrador
-    @PutMapping("/{id}")
-    public ResponseEntity<Administrador> update(@PathVariable UUID id, @Valid @RequestBody Administrador administrador) {
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Administrador> update(@PathVariable UUID id,
+            @Valid @RequestBody Administrador administrador) {
         administrador.setId(id); // Asegúrate de que el ID coincida
         Administrador updatedAdministrador = administradorService.update(administrador);
         return new ResponseEntity<>(updatedAdministrador, HttpStatus.OK);
