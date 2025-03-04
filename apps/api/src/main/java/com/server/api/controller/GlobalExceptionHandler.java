@@ -13,12 +13,12 @@ public class GlobalExceptionHandler {
      * Maneja excepciones de tipo HttpMediaTypeNotSupportedException.
      * Devuelve un mensaje de error detallado cuando el Content-Type no es soportado.
      */
-/*     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<String> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
         String errorMessage = "Tipo de contenido no soportado: " + ex.getContentType() + 
                               ". Se esperaba: application/json.";
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(errorMessage);
-    } */
+    }
 
     /**
      * Maneja excepciones genéricas.

@@ -38,19 +38,26 @@ public class AdministradorController {
     }
 
     // Crear un administrador
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Administrador> save( @Valid @RequestBody Administrador administrador) {
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Administrador> save(@Valid @RequestBody Administrador administrador) {
         Administrador savedAdministrador = administradorService.save(administrador);
         return new ResponseEntity<>(savedAdministrador, HttpStatus.CREATED);
     }
+
     // Actualizar un administrador
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Administrador> update(@PathVariable UUID id,
-            @Valid @RequestBody Administrador administrador) {
-        administrador.setId(id); // Asegúrate de que el ID coincida
+    public ResponseEntity<Administrador> update(@PathVariable UUID id, @RequestBody Administrador administrador) {
+        // Asegúrate de que el ID del administrador coincida con el ID de la URL
+        administrador.setId(id);
+    
+        // Llama al servicio para actualizar el administrador
         Administrador updatedAdministrador = administradorService.update(administrador);
+    
+        // Devuelve la respuesta con el administrador actualizado
         return new ResponseEntity<>(updatedAdministrador, HttpStatus.OK);
     }
+    
 
     // Eliminar un administrador (soft delete)
     @DeleteMapping("/{id}")

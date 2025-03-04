@@ -33,8 +33,22 @@ public class AdministradorService {
 
     // Actualizar un administrador
     public Administrador update(Administrador administrador) {
-        return administradorRepository.save(administrador);
+        // Asegúrate de que el administrador exista antes de actualizarlo
+        Optional<Administrador> existingAdministrador = administradorRepository.findById(administrador.getId());
+        if (existingAdministrador.isPresent()) {
+            // Si la clave no se proporciona en la solicitud, mantén la clave existente
+            if (administrador.getClave() == null || administrador.getClave().isEmpty()) {
+                administrador.setClave(existingAdministrador.get().getClave());
+            }
+            // Guarda el administrador actualizado
+            return administradorRepository.save(administrador);
+        } else {
+            // Maneja el caso en que el administrador no existe
+            throw new RuntimeException("Administrador no encontrado");
+        }
     }
+    
+    
 
     // Eliminar un administrador (soft delete)
     public void deleteById(UUID id) {

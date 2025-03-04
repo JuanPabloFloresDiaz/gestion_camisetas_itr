@@ -40,36 +40,36 @@ const Login: React.FC = () => {
           <form className="space-y-4" onSubmit={handleLogin}>
             {/* Campo de correo electrónico */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-blue-700">
                 Correo Electrónico
               </label>
               <div className="relative mt-1">
-                <span className="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <span className="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
                   email
                 </span>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Ingresa tu correo electrónico"
-                  className="pl-10" // Añade padding a la izquierda para el ícono
+                  className="pl-10 border-blue-800" // Añade padding a la izquierda para el ícono
                 />
               </div>
             </div>
 
             {/* Campo de contraseña */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-blue-700">
                 Contraseña
               </label>
               <div className="relative mt-1">
-                <span className="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <span className="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
                   lock
                 </span>
                 <Input
                   id="password"
                   type="password"
                   placeholder="Ingresa tu contraseña"
-                  className="pl-10" // Añade padding a la izquierda para el ícono
+                  className="pl-10 border-blue-800" // Añade padding a la izquierda para el ícono
                 />
               </div>
             </div>

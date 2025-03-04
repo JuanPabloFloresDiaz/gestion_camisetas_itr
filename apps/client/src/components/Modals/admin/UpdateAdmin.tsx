@@ -17,16 +17,19 @@ import {
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query"; // Para actualizar la caché
+import { IMaskInput } from "react-imask"; // Para las máscaras de entrada
+import { toast } from "sonner"; // Para mostrar notificaciones
 
 // Esquema de validación con Zod (sin el campo de contraseña)
 const adminSchema = z.object({
-  nombre: z.string().min(1, "El nombre es obligatorio"),
-  apellido: z.string().min(1, "El apellido es obligatorio"),
-  correo: z.string().email("Correo electrónico inválido"),
-  telefono: z.string().min(8, "El teléfono debe tener al menos 8 caracteres"),
-  dui: z.string().min(9, "El DUI debe tener 9 caracteres"),
-  alias: z.string().min(1, "El alias es obligatorio"),
-  estado: z.boolean(),
+  nombre: z.string().min(1, "El nombre es obligatorio").max(50, "El nombre no puede tener más de 50 caracteres"),
+  apellido: z.string().min(1, "El apellido es obligatorio").max(50, "El apellido no puede tener más de 50 caracteres"),
+  correo: z.string().email("El correo debe tener un formato válido").max(80, "El correo no puede tener más de 80 caracteres"),
+  telefono: z.string().min(1, "El teléfono es obligatorio").max(15, "El teléfono no puede tener más de 15 caracteres"),
+  dui: z.string().max(10, "El DUI no puede tener más de 10 caracteres").optional(),
+  alias: z.string().max(25, "El alias no puede tener más de 25 caracteres").optional(),
+  estado: z.boolean().optional(),
 });
 
 type AdminFormValues = z.infer<typeof adminSchema>;
@@ -38,11 +41,13 @@ interface UpdateAdminModalProps {
 export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [estado, setEstado] = useState(admin.estado);
+  const queryClient = useQueryClient(); // Para acceder a la caché de TanStack Query
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<AdminFormValues>({
     resolver: zodResolver(adminSchema),
@@ -61,11 +66,29 @@ export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
     try {
       // Agregar el id del administrador al objeto data
       const payload = { ...data, id: admin.id };
-      await updateAdministrador(admin.id, payload);
+      const updatedAdmin = await updateAdministrador(admin.id, payload);
+
+      // Actualizar la caché de TanStack Query
+      queryClient.setQueryData(["administradores"], (oldData: Administrador[] | undefined) => {
+        return oldData
+          ? oldData.map((admin) => (admin.id === updatedAdmin.id ? updatedAdmin : admin))
+          : [updatedAdmin];
+      });
+
+      // Mostrar alerta de éxito con sonner
+      toast.success("Administrador actualizado", {
+        description: "El administrador se ha actualizado correctamente.",
+      });
+
       setIsOpen(false);
       reset();
     } catch (error) {
       console.error("Error al actualizar administrador:", error);
+
+      // Mostrar alerta de error con sonner
+      toast.error("Error", {
+        description: "No se pudo actualizar el administrador.",
+      });
     }
   };
 
@@ -175,17 +198,19 @@ export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
                     )}
                   </div>
 
-                  {/* Teléfono */}
+                  {/* Teléfono con máscara */}
                   <div>
                     <Label htmlFor="telefono" className="text-yellow-500">
                       Teléfono
                     </Label>
                     <div className="relative mt-2">
-                      <Input
+                      <IMaskInput
                         id="telefono"
-                        {...register("telefono")}
+                        mask="0000-0000"
                         placeholder="Ingrese el teléfono"
                         className="pl-10 border-2 border-yellow-500 rounded-lg"
+                        defaultValue={admin.telefono} // Valor inicial
+                        onAccept={(value) => setValue("telefono", value)} // Actualizar el valor en react-hook-form
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-yellow-500">
                         <span className="material-icons">phone</span>
@@ -198,17 +223,19 @@ export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
                     )}
                   </div>
 
-                  {/* DUI */}
+                  {/* DUI con máscara */}
                   <div>
                     <Label htmlFor="dui" className="text-yellow-500">
                       DUI
                     </Label>
                     <div className="relative mt-2">
-                      <Input
+                      <IMaskInput
                         id="dui"
-                        {...register("dui")}
+                        mask="00000000-0"
                         placeholder="Ingrese el DUI"
                         className="pl-10 border-2 border-yellow-500 rounded-lg"
+                        defaultValue={admin.dui} // Valor inicial
+                        onAccept={(value) => setValue("dui", value)} // Actualizar el valor en react-hook-form
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-yellow-500">
                         <span className="material-icons">badge</span>

@@ -17,17 +17,20 @@ import {
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query"; // Para actualizar la caché
+import { IMaskInput } from "react-imask"; // Para las máscaras de entrada
+import { toast } from "sonner";
 
 // Esquema de validación con Zod
 const adminSchema = z.object({
-  nombre: z.string().min(1, "El nombre es obligatorio"),
-  apellido: z.string().min(1, "El apellido es obligatorio"),
-  correo: z.string().email("Correo electrónico inválido"),
-  clave: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-  telefono: z.string().min(8, "El teléfono debe tener al menos 8 caracteres"),
-  dui: z.string().min(9, "El DUI debe tener 9 caracteres"),
-  alias: z.string().min(1, "El alias es obligatorio"),
-  estado: z.boolean(),
+  nombre: z.string().min(1, "El nombre es obligatorio").max(50, "El nombre no puede tener más de 50 caracteres"),
+  apellido: z.string().min(1, "El apellido es obligatorio").max(50, "El apellido no puede tener más de 50 caracteres"),
+  correo: z.string().email("El correo debe tener un formato válido").max(80, "El correo no puede tener más de 80 caracteres"),
+  clave: z.string().min(8, "La clave debe tener al menos 8 caracteres").max(100, "La clave no puede tener más de 100 caracteres"),
+  telefono: z.string().min(1, "El teléfono es obligatorio").max(15, "El teléfono no puede tener más de 15 caracteres"),
+  dui: z.string().max(10, "El DUI no puede tener más de 10 caracteres").optional(),
+  alias: z.string().max(25, "El alias no puede tener más de 25 caracteres").optional(),
+  estado: z.boolean().optional(),
 });
 
 type AdminFormValues = z.infer<typeof adminSchema>;
@@ -35,11 +38,13 @@ type AdminFormValues = z.infer<typeof adminSchema>;
 export default function CreateAdminModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [estado, setEstado] = useState(true);
+  const queryClient = useQueryClient(); // Para acceder a la caché de TanStack Query
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<AdminFormValues>({
     resolver: zodResolver(adminSchema),
@@ -50,11 +55,27 @@ export default function CreateAdminModal() {
 
   const onSubmit: SubmitHandler<AdminFormValues> = async (data) => {
     try {
-      await createAdministrador(data);
+      const newAdmin = await createAdministrador(data);
+
+      // Actualizar la caché de TanStack Query
+      queryClient.setQueryData(["administradores"], (oldData: Administrador[] | undefined) => {
+        return oldData ? [...oldData, newAdmin] : [newAdmin];
+      });
+
+      // Mostrar alerta de éxito con sonner
+      toast.success("Administrador creado", {
+        description: "El administrador se ha agregado correctamente.",
+      });
+
       setIsOpen(false);
       reset();
     } catch (error) {
       console.error("Error al crear administrador:", error);
+
+      // Mostrar alerta de error con sonner
+      toast.error("Error", {
+        description: "No se pudo crear el administrador.",
+      });
     }
   };
 
@@ -188,17 +209,18 @@ export default function CreateAdminModal() {
                     )}
                   </div>
 
-                  {/* Teléfono */}
+                  {/* Teléfono con máscara */}
                   <div>
                     <Label htmlFor="telefono" className="text-blue-800">
                       Teléfono
                     </Label>
                     <div className="relative mt-2">
-                      <Input
+                      <IMaskInput
                         id="telefono"
-                        {...register("telefono")}
+                        mask="0000-0000"
                         placeholder="Ingrese el teléfono"
                         className="pl-10 border-2 border-blue-800 rounded-lg"
+                        onAccept={(value) => setValue("telefono", value)} // Actualizar el valor en react-hook-form
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-blue-800">
                         <span className="material-icons">phone</span>
@@ -211,17 +233,18 @@ export default function CreateAdminModal() {
                     )}
                   </div>
 
-                  {/* DUI */}
+                  {/* DUI con máscara */}
                   <div>
                     <Label htmlFor="dui" className="text-blue-800">
                       DUI
                     </Label>
                     <div className="relative mt-2">
-                      <Input
+                      <IMaskInput
                         id="dui"
-                        {...register("dui")}
+                        mask="00000000-0"
                         placeholder="Ingrese el DUI"
                         className="pl-10 border-2 border-blue-800 rounded-lg"
+                        onAccept={(value) => setValue("dui", value)} // Actualizar el valor en react-hook-form
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-blue-800">
                         <span className="material-icons">badge</span>
