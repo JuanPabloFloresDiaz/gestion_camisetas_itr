@@ -1,7 +1,7 @@
 import AxiosRequest from '../hooks/AxiosRequest';
 import { Method } from 'axios';
 
-const RESOURCE = 'TipoCamisas';
+const RESOURCE = 'tipo-camisas';
 
 export interface TipoCamisa {
   id: string;
@@ -28,7 +28,7 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
 };
 
 // Crear un TipoCamisa
-export const createTipoCamisa = async (payload: TipoCamisa) => {
+export const createTipoCamisa = async (payload: Omit<TipoCamisa, "id">) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
