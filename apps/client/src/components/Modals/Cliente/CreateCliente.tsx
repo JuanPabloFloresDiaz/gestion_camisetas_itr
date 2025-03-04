@@ -87,7 +87,7 @@ export default function CreateClienteModal() {
       {/* Modal de HeroUI */}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="fixed inset-0 flex items-center justify-center z-40 bg-neutral-500 bg-opacity-5">
-          <ModalContent className="bg-white rounded-lg shadow-lg max-w-lg w-auto h-auto max-h-[83vh] flex flex-col">
+          <ModalContent className="bg-white rounded-lg shadow-lg max-w-lg w-auto h-auto max-h-[59vh] flex flex-col">
             {/* Cabecera con borde azul */}
             <ModalHeader className="border-b-2 border-blue-800 p-4 flex items-center justify-between">
               <div className="flex items-center space-x-2">

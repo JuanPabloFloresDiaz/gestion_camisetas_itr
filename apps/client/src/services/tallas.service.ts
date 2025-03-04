@@ -27,7 +27,7 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
 };
 
 // Crear un Talla
-export const createTalla = async (payload: Talla) => {
+export const createTalla = async (payload: Omit<Talla, "id">) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
