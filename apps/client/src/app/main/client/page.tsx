@@ -1,9 +1,6 @@
-// src/app/dashboard/page.tsx
-export default function DashboardPage() {
-    return (
-      <div>
-        <h1 className="text-2xl font-bold">Bienvenido a clientes</h1>
-        <p className="text-gray-600">Selecciona una opción en la sidebar.</p>
-      </div>
-    );
-  }
+// src/app/Cliente/page.tsx
+import Cliente from "../../../views/Clients";
+
+export default function ClientePage() {
+  return <Cliente />;
+}

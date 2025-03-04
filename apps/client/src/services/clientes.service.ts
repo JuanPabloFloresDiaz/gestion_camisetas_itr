@@ -3,7 +3,7 @@ import { Method } from 'axios';
 
 const RESOURCE = 'clientes';
 
-export interface Clientes {
+export interface Cliente {
   id: string;
   nombre: string;
   apellido: string;
@@ -32,7 +32,7 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
 };
 
 // Crear un cliente
-export const createCliente = async (payload: Clientes) => {
+export const createCliente = async (payload: Omit<Cliente, "id">) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
@@ -47,7 +47,7 @@ export const getCliente = async (id: string) => {
 };
 
 // Actualizar un cliente
-export const updateCliente = async (id: string, payload: Clientes) => {
+export const updateCliente = async (id: string, payload: Cliente) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('U'), payload);
 };
 
