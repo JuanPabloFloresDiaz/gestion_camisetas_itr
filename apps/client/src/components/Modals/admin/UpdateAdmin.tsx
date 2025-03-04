@@ -27,8 +27,8 @@ const adminSchema = z.object({
   apellido: z.string().min(1, "El apellido es obligatorio").max(50, "El apellido no puede tener más de 50 caracteres"),
   correo: z.string().email("El correo debe tener un formato válido").max(80, "El correo no puede tener más de 80 caracteres"),
   telefono: z.string().min(1, "El teléfono es obligatorio").max(15, "El teléfono no puede tener más de 15 caracteres"),
-  dui: z.string().max(10, "El DUI no puede tener más de 10 caracteres").optional(),
-  alias: z.string().max(25, "El alias no puede tener más de 25 caracteres").optional(),
+  dui: z.string().max(10, "El DUI no puede tener más de 10 caracteres").optional().nullable(),
+  alias: z.string().max(25, "El alias no puede tener más de 25 caracteres").optional().nullable(),
   estado: z.boolean().optional(),
 });
 

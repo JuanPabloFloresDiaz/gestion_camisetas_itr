@@ -2,6 +2,8 @@ package com.server.api.service;
 
 import com.server.api.repository.AdministradorRepository;
 import com.server.api.model.Administrador;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +13,11 @@ import java.util.UUID;
 public class AdministradorService {
 
     private final AdministradorRepository administradorRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdministradorService(AdministradorRepository administradorRepository) {
-        this.administradorRepository = administradorRepository;
+    public AdministradorService(AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder) {
+            this.administradorRepository = administradorRepository;
+            this.passwordEncoder = passwordEncoder;
     }
 
     // Obtener todos los administradores (no eliminados)
@@ -28,6 +32,7 @@ public class AdministradorService {
 
     // Guardar un administrador
     public Administrador save(Administrador administrador) {
+        administrador.setClave(passwordEncoder.encode(administrador.getClave()));
         return administradorRepository.save(administrador);
     }
 

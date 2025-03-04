@@ -10,8 +10,8 @@ export interface Administrador {
   clave: string;
   correo: string;
   telefono: string;
-  dui: string;
-  alias: string;
+  dui?: string | null;
+  alias?: string | null;
   estado: boolean;
 }
 

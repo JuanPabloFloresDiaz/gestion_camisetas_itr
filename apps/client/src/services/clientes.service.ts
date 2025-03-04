@@ -9,8 +9,8 @@ export interface Cliente {
   apellido: string;
   correo: string;
   telefono: string;
-  dui: string;
-  direccion: string;
+  dui?: string | null;
+  direccion?: string | null;
 }
 
 // Función para mapear CRUD a métodos HTTP
