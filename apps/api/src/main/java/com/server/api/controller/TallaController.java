@@ -1,7 +1,8 @@
 package com.server.api.controller;
-import com.server.application.service.TallaService;
-import com.server.domain.model.Talla;
+import com.server.api.service.TallaService;
+import com.server.api.model.Talla;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class TallaController {
     }
 
     // Crear una talla
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Talla> save(@Valid @RequestBody Talla talla) {
         Talla savedTalla = tallaService.save(talla);
         return new ResponseEntity<>(savedTalla, HttpStatus.CREATED);

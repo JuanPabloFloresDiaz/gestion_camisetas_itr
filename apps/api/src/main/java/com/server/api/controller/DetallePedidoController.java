@@ -1,6 +1,6 @@
 package com.server.api.controller;
-import com.server.application.service.DetallePedidoService;
-import com.server.domain.model.DetallePedido;
+import com.server.api.service.DetallePedidoService;
+import com.server.api.model.DetallePedido;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

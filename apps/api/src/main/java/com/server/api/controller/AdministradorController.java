@@ -1,11 +1,12 @@
 package com.server.api.controller;
 
-import com.server.application.service.AdministradorService;
-import com.server.domain.model.Administrador;
+import com.server.api.service.AdministradorService;
+import com.server.api.model.Administrador;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +38,11 @@ public class AdministradorController {
     }
 
     // Crear un administrador
-    @PostMapping(consumes = "application/json;charset=UTF-8", // Acepta application/json;charset=UTF-8
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Administrador> save(@Valid @RequestBody Administrador administrador) {
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Administrador> save( @Valid @RequestBody Administrador administrador) {
         Administrador savedAdministrador = administradorService.save(administrador);
         return new ResponseEntity<>(savedAdministrador, HttpStatus.CREATED);
     }
-
     // Actualizar un administrador
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Administrador> update(@PathVariable UUID id,

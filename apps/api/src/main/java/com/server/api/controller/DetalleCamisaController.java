@@ -1,6 +1,6 @@
 package com.server.api.controller;
-import com.server.application.service.DetalleCamisaService;
-import com.server.domain.model.DetalleCamisa;
+import com.server.api.service.DetalleCamisaService;
+import com.server.api.model.DetalleCamisa;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

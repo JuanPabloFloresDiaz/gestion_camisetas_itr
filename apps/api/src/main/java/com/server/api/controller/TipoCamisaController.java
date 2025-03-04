@@ -1,6 +1,6 @@
 package com.server.api.controller;
-import com.server.application.service.TipoCamisaService;
-import com.server.domain.model.TipoCamisa;
+import com.server.api.service.TipoCamisaService;
+import com.server.api.model.TipoCamisa;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
