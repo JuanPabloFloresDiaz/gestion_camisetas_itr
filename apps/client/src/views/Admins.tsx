@@ -23,6 +23,7 @@ export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
 
   const itemsPerPage = 5; // Número de elementos por página
 
@@ -32,13 +33,27 @@ export default function Admin() {
     queryFn: getAdministradores, // Función que obtiene los datos
   });
 
+  // Filtrar administradores en función del término de búsqueda
+  const filteredAdmins = admins
+    ? admins.filter((admin) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          admin.nombre.toLowerCase().includes(searchLower) ||
+          admin.apellido.toLowerCase().includes(searchLower) ||
+          admin.correo.toLowerCase().includes(searchLower) ||
+          admin.telefono.toLowerCase().includes(searchLower)
+        );
+      })
+    : [];
+
   // Calcular el número total de páginas
-  const totalPages = admins ? Math.ceil(admins.length / itemsPerPage) : 0;
+  const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
 
   // Obtener los administradores de la página actual
-  const currentAdmins = admins
-    ? admins.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    : [];
+  const currentAdmins = filteredAdmins.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleDeleteClick = (adminId: string) => {
     setAdminToDelete(adminId);
@@ -49,7 +64,7 @@ export default function Admin() {
     setDeleteModalOpen(false);
     setAdminToDelete(null);
   };
-  
+
   // Mostrar un mensaje de carga mientras se obtienen los datos
   if (isLoading) {
     return (
@@ -91,6 +106,11 @@ export default function Admin() {
             type="text"
             placeholder="Buscar administrador..."
             className="pl-10 pr-4 py-2 w-full border-2 border-blue-800 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value); // Actualizar el término de búsqueda
+              setCurrentPage(1); // Reiniciar la paginación al buscar
+            }}
           />
           {/* Ícono de búsqueda */}
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-blue-800">
