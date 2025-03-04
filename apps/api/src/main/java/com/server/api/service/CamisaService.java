@@ -31,7 +31,19 @@ public class CamisaService {
 
     // Actualizar una camisa
     public Camisa update(Camisa camisa) {
-        return camisaRepository.save(camisa);
+        // Asegúrate de que la camisa exista antes de actualizarla
+        Optional<Camisa> existingCamisa = camisaRepository.findById(camisa.getId());
+        if (existingCamisa.isPresent()) {
+            // Si el administrador no se proporciona en la solicitud, mantén el administrador existente
+            if (camisa.getAdministrador() == null) {
+                camisa.setAdministrador(existingCamisa.get().getAdministrador());
+            }
+            // Guarda la camisa actualizada
+            return camisaRepository.save(camisa);
+        } else {
+            // Maneja el caso en que la camisa no existe
+            throw new RuntimeException("Camisa no encontrada");
+        }
     }
 
     // Eliminar una camisa (soft delete)

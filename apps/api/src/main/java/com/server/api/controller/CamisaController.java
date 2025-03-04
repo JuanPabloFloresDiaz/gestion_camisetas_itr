@@ -43,7 +43,7 @@ public class CamisaController {
 
     // Actualizar una camisa
     @PutMapping("/{id}")
-    public ResponseEntity<Camisa> update(@PathVariable UUID id, @Valid @RequestBody Camisa camisa) {
+    public ResponseEntity<Camisa> update(@PathVariable UUID id, @RequestBody Camisa camisa) {
         camisa.setId(id); // Asegúrate de que el ID coincida
         Camisa updatedCamisa = camisaService.update(camisa);
         return new ResponseEntity<>(updatedCamisa, HttpStatus.OK);

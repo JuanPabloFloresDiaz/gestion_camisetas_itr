@@ -7,11 +7,11 @@ export interface Camisa {
   id: string;
   nombre: string;
   descripcion: string;
-  precion: number;
+  precio: number;
   estadoVenta: boolean;
-  fotoPrincipal: string;
-  administrador: string;
-  tipoCamisa: string;
+  fotoPrincipal?: string | null;
+  administrador: object;
+  tipoCamisa: object;
 }
 
 // Función para mapear CRUD a métodos HTTP
@@ -33,7 +33,7 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
 };
 
 // Crear un camisa
-export const createCamisa = async (payload: Camisa) => {
+export const createCamisa = async (payload: Omit<Camisa, "id">) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
@@ -48,7 +48,7 @@ export const getCamisa = async (id: string) => {
 };
 
 // Actualizar un camisa
-export const updateCamisa = async (id: string, payload: Camisa) => {
+export const updateCamisa = async (id: string, payload: Omit<Camisa, "administrador">) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('U'), payload);
 };
 
