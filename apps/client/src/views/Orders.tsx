@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -13,22 +14,21 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { getPedidos } from "@/services/pedidos.service"; // Importar servicio de pedidos
-import { Pedido } from "@/services/pedidos.service"; // Importar interfaz Pedido
+import { getPedidos } from "@/services/pedidos.service";
+import { Pedido } from "@/services/pedidos.service";
+import { ShoppingCart, Search, Loader2 } from "lucide-react";
 
 export default function Pedidos() {
-  const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const itemsPerPage = 5; // Número de elementos por página
+  const itemsPerPage = 5;
 
-  // Usar TanStack Query para obtener los pedidos
   const { data: pedidos, isLoading, isError } = useQuery({
-    queryKey: ["pedidos"], // Clave única para la consulta
-    queryFn: getPedidos, // Función que obtiene los datos
+    queryKey: ["pedidos"],
+    queryFn: getPedidos,
   });
 
-  // Filtrar pedidos en función del término de búsqueda
   const filteredPedidos = pedidos
     ? pedidos.filter((pedido) => {
         const searchLower = searchTerm.toLowerCase();
@@ -39,123 +39,234 @@ export default function Pedidos() {
       })
     : [];
 
-  // Calcular el número total de páginas
   const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage);
-
-  // Obtener los pedidos de la página actual
   const currentPedidos = filteredPedidos.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Mostrar un mensaje de carga mientras se obtienen los datos
   if (isLoading) {
     return (
-      <div className="p-6 bg-white text-gray-900 min-h-screen">
-        <h1 className="text-2xl font-bold mb-6 flex items-center">
-          <span className="material-icons text-blue-900 mr-2">shopping_cart</span>
-          Gestión de Pedidos
-        </h1>
-        <p>Cargando pedidos...</p>
+      <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
+        <div className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-8 shadow-md">
+          <h1 className="text-2xl font-bold text-white flex items-center">
+            <ShoppingCart className="mr-2 h-6 w-6" />
+            Gestión de Pedidos
+          </h1>
+        </div>
+        <div className="flex flex-col items-center justify-center h-[60vh]">
+          <Loader2 className="h-12 w-12 text-blue-600 animate-spin mb-4" />
+          <p className="text-blue-800 text-lg font-medium">Cargando pedidos...</p>
+        </div>
       </div>
     );
   }
 
-  // Mostrar un mensaje de error si la consulta falla
   if (isError) {
     return (
-      <div className="p-6 bg-white text-gray-900 min-h-screen">
-        <h1 className="text-2xl font-bold mb-6 flex items-center">
-          <span className="material-icons text-blue-900 mr-2">shopping_cart</span>
-          Gestión de Pedidos
-        </h1>
-        <p className="text-red-500">Error al cargar los pedidos.</p>
+      <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
+        <div className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-8 shadow-md">
+          <h1 className="text-2xl font-bold text-white flex items-center">
+            <ShoppingCart className="mr-2 h-6 w-6" />
+            Gestión de Pedidos
+          </h1>
+        </div>
+        <Card className="border-red-200 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-red-100 p-3 rounded-full mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-10 w-10 text-red-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-red-700 mb-2">Error al cargar los pedidos</h2>
+              <p className="text-gray-600 mb-4">
+                No se pudieron cargar los datos. Por favor, intenta nuevamente más tarde.
+              </p>
+              <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => window.location.reload()}>
+                Reintentar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-white text-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 flex items-center text-blue-900">
-        <span className="material-icons text-blue-900 mr-2">shopping_cart</span>
-        Gestión de Pedidos
-      </h1>
+    <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
+      <div className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-8 shadow-md">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <h1 className="text-2xl font-bold text-white flex items-center">
+            <ShoppingCart className="mr-2 h-6 w-6" />
+            Gestión de Pedidos
+          </h1>
+          <p className="text-blue-100">
+            Total: <span className="font-bold">{filteredPedidos.length}</span> pedidos
+          </p>
+        </div>
+      </div>
 
-      {/* Buscador y botón de agregar */}
-      <div className="flex justify-between items-center mb-6">
-        {/* Contenedor del buscador con borde azul y ícono */}
-        <div className="relative w-1/2">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="relative w-full md:w-1/2">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-blue-500" />
+          </div>
           <Input
             type="text"
             placeholder="Buscar pedido..."
-            className="pl-10 pr-4 py-2 w-full border-2 border-blue-800 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+            className="pl-10 border-blue-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm"
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value); // Actualizar el término de búsqueda
-              setCurrentPage(1); // Reiniciar la paginación al buscar
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
             }}
           />
-          {/* Ícono de búsqueda */}
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-blue-800">
-            <span className="material-icons">search</span>
-          </span>
+          {searchTerm && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-5 w-5 text-gray-400 hover:text-gray-600"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCurrentPage(1);
+                }}
+              >
+                ×
+              </Button>
+            </div>
+          )}
         </div>
         <Button variant="default" className="bg-blue-800 text-white hover:bg-blue-600">
           Agregar Pedido
         </Button>
       </div>
 
-      {/* Tabla de pedidos */}
-      <div className="rounded-lg shadow-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-blue-800 hover:bg-gray-900">
-              <TableHead className="text-white">Dirección</TableHead>
-              <TableHead className="text-white">Fecha</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentPedidos.map((pedido: Pedido) => (
-              <TableRow key={pedido.id} className="hover:bg-gray-100">
-                <TableCell>{pedido.direccionPedido}</TableCell>
-                <TableCell>{new Date(pedido.fechaPedido).toLocaleDateString()}</TableCell>
+      <Card className="border-blue-100 shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-blue-600 hover:bg-blue-700">
+                <TableHead className="text-white font-medium">Dirección</TableHead>
+                <TableHead className="text-white font-medium">Fecha</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {currentPedidos.length > 0 ? (
+                currentPedidos.map((pedido: Pedido) => (
+                  <TableRow key={pedido.id} className="hover:bg-blue-50 transition-colors">
+                    <TableCell className="font-medium text-blue-900">{pedido.direccionPedido}</TableCell>
+                    <TableCell className="text-gray-600">{new Date(pedido.fechaPedido).toLocaleDateString()}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="text-center py-8 text-gray-500">
+                    {searchTerm ? (
+                      <div className="flex flex-col items-center">
+                        <Search className="h-8 w-8 text-gray-400 mb-2" />
+                        <p>
+                          No se encontraron pedidos que coincidan con "
+                          <span className="font-medium">{searchTerm}</span>"
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <ShoppingCart className="h-8 w-8 text-gray-400 mb-2" />
+                        <p>No hay pedidos disponibles</p>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </Card>
 
-      {/* Paginación con shadcn/ui */}
-      <div className="mt-6 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            {/* Botón "Anterior" */}
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                aria-disabled={currentPage === 1}
-              />
-            </PaginationItem>
+      {filteredPedidos.length > 0 && (
+        <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-blue-700 mb-4 md:mb-0">
+            Mostrando{" "}
+            <span className="font-medium">
+              {Math.min(filteredPedidos.length, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(filteredPedidos.length, currentPage * itemsPerPage)}
+            </span>{" "}
+            de <span className="font-medium">{filteredPedidos.length}</span> pedidos
+          </p>
 
-            {/* Indicador de página actual */}
-            <PaginationItem>
-              <span className="px-4 py-2 text-sm font-medium">
-                Página {currentPage} de {totalPages}
-              </span>
-            </PaginationItem>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={`${currentPage === 1 ? "pointer-events-none opacity-50" : "hover:bg-blue-50 hover:text-blue-700"} border border-blue-200`}
+                  aria-disabled={currentPage === 1}
+                />
+              </PaginationItem>
 
-            {/* Botón "Siguiente" */}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                aria-disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageToShow;
+                if (totalPages <= 5) {
+                  pageToShow = i + 1;
+                } else if (currentPage <= 3) {
+                  pageToShow = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageToShow = totalPages - 4 + i;
+                } else {
+                  pageToShow = currentPage - 2 + i;
+                }
+
+                if (pageToShow > 0 && pageToShow <= totalPages) {
+                  return (
+                    <PaginationItem key={pageToShow}>
+                      <Button
+                        variant={currentPage === pageToShow ? "default" : "outline"}
+                        size="icon"
+                        className={`w-9 h-9 ${
+                          currentPage === pageToShow
+                            ? "bg-blue-600 hover:bg-blue-700"
+                            : "text-blue-700 border-blue-200 hover:bg-blue-50"
+                        }`}
+                        onClick={() => setCurrentPage(pageToShow)}
+                      >
+                        {pageToShow}
+                      </Button>
+                    </PaginationItem>
+                  );
+                }
+                return null;
+              })}
+
+              {totalPages > 5 && currentPage < totalPages - 2 && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : "hover:bg-blue-50 hover:text-blue-700"} border border-blue-200`}
+                  aria-disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }
