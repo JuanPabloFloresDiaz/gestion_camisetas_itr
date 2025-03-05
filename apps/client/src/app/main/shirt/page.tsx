@@ -1,6 +1,6 @@
 // src/app/shirt/page.tsx
 import Camisa from "../../../views/Shirts";
 
-export default function ClientePage() {
+export default function CamisaPage() {
   return <Camisa />;
 }

@@ -7,7 +7,7 @@ export interface Pedido {
   id: string;
   fechaPedido: Date;
   direccionPedido: string;
-  cliente: string;
+  cliente: object;
 }
 
 // Función para mapear CRUD a métodos HTTP
