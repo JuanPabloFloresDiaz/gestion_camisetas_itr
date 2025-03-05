@@ -27,6 +27,11 @@ public class DetalleCamisaService {
         return detalleCamisaRepository.save(detalleCamisa);
     }
 
+    // Guardar varios detalles de camisa
+    public List<DetalleCamisa> saveAll(List<DetalleCamisa> detallesCamisa) {
+        return detalleCamisaRepository.saveAll(detallesCamisa);
+    }
+
     // Actualizar un detalle de camisa
     public DetalleCamisa update(DetalleCamisa detalleCamisa) {
         return detalleCamisaRepository.save(detalleCamisa);
@@ -36,4 +41,9 @@ public class DetalleCamisaService {
     public void deleteById(UUID id) {
         detalleCamisaRepository.deleteById(id);
     }    
+
+    // Buscar detalles de camisas por camisa
+    public List<DetalleCamisa> findByCamisa(UUID camisaId) {
+        return detalleCamisaRepository.findByCamisaId(camisaId);
+    }
 }

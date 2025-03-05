@@ -29,7 +29,7 @@ Para garantizar un sistema moderno, rápido y seguro, se ha optado por tecnolog�
 
 Backend (Administración de datos y lógica de negocio)
 📌 Lenguaje: Java 21 con Spring Boot
-📌 Arquitectura: Hexagonal, asegurando modularidad y mantenibilidad
+📌 Arquitectura: Arquitectura por capas, facilita el mantenimiento y la escalabilidad
 📌 Tecnologías clave:
 
 - Spring Security (para autenticación y seguridad)
@@ -43,7 +43,7 @@ Base de Datos
 
 Frontend (Interfaz de administración)
 📌 Framework: Next.js con TypeScript
-📌 Librería UI: ShadCN para un diseño limpio y moderno
+📌 Librería UI: ShadCN para un diseño limpio y moderno y elementos de HeroUI
 📌 Manejo de datos:
 - Axios + TanStack Query (React Query) para gestión eficiente del caché y solicitudes
 - FormData para manejo de archivos

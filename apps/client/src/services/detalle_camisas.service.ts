@@ -5,8 +5,8 @@ const RESOURCE = 'detail-camisas';
 
 export interface DetalleCamisa {
   id: string;
-  camisa: string;
-  talla: string;
+  camisa: object;
+  talla: object;
 }
 
 // Función para mapear CRUD a métodos HTTP
@@ -32,6 +32,11 @@ export const createDetalleCamisa = async (payload: DetalleCamisa) => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
+// Crear varios camisas
+export const createDetalleCamisas = async (payload: DetalleCamisa[]) => {
+  return await AxiosRequest(`/${RESOURCE}/all`, mapMethod('C'), payload);
+};
+
 // Obtener todos los camisas
 export const getDetalleCamisas = async () => {
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('R'));
@@ -51,3 +56,8 @@ export const updateDetalleCamisa = async (id: string, payload: DetalleCamisa) =>
 export const deleteDetalleCamisa = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('D'));
 };
+
+// Buscar detalle_camisas por camisa
+export const searchDetalleCamisasByCamisa = async (camisaId: string) => {
+  return await AxiosRequest(`/${RESOURCE}/camisa/${camisaId}`, mapMethod('R'));
+}

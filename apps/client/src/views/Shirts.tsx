@@ -18,6 +18,7 @@ import { Camisa } from "@/services/camisas.service"; // Importar interfaz Camisa
 import CreateCamisaModal from "@/components/Modals/Camisas/CreateCamisa"; // Modal para crear camisa
 import UpdateCamisaModal from "@/components/Modals/Camisas/UpdateCamisa"; // Modal para actualizar camisa
 import DeleteCamisaModal from "@/components/Modals/Camisas/DeleteCamisa"; // Modal para eliminar camisa
+import DetalleCamisaModal from "@/components/Modals/Camisas/DetalleCamisa"; // Modal para gestionar tallas de camisa
 
 export default function Camisas() {
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
@@ -140,6 +141,7 @@ export default function Camisas() {
                 <TableCell>
                   <div className="flex space-x-2">
                     <UpdateCamisaModal camisa={camisa} />
+                    <DetalleCamisaModal camisa={camisa} />
                     <Button
                       variant="ghost"
                       className="text-red-400 hover:bg-red-400 hover:text-white"

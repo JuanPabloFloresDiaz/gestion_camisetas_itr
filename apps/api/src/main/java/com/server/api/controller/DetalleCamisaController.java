@@ -40,6 +40,13 @@ public class DetalleCamisaController {
         return new ResponseEntity<>(savedDetalleCamisa, HttpStatus.CREATED);
     }
 
+    // Crear varios detalles de camisa
+    @PostMapping("/all")
+    public ResponseEntity<List<DetalleCamisa>> saveAll(@Valid @RequestBody List<DetalleCamisa> detallesCamisa) {
+        List<DetalleCamisa> savedDetallesCamisa = detalleCamisaService.saveAll(detallesCamisa);
+        return new ResponseEntity<>(savedDetallesCamisa, HttpStatus.CREATED);
+    }
+
     // Actualizar un detalle de camisa
     @PutMapping("/{id}")
     public ResponseEntity<DetalleCamisa> update(@PathVariable UUID id, @Valid @RequestBody DetalleCamisa detalleCamisa) {
@@ -53,5 +60,12 @@ public class DetalleCamisaController {
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         detalleCamisaService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Buscar detalles de camisas por camisa
+    @GetMapping("/camisa/{camisaId}")
+    public ResponseEntity<List<DetalleCamisa>> findByCamisa(@PathVariable UUID camisaId) {
+        List<DetalleCamisa> detallesCamisa = detalleCamisaService.findByCamisa(camisaId);
+        return new ResponseEntity<>(detallesCamisa, HttpStatus.OK);
     }
 }
