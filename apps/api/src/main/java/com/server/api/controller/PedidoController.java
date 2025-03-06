@@ -1,4 +1,5 @@
 package com.server.api.controller;
+
 import com.server.api.service.PedidoService;
 import com.server.api.model.Pedido;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,13 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<Pedido> save(@Valid @RequestBody Pedido pedido) {
         Pedido savedPedido = pedidoService.save(pedido);
+        return new ResponseEntity<>(savedPedido, HttpStatus.CREATED);
+    }
+
+    // Crear un pedido con detalles
+    @PostMapping("/with-details")
+    public ResponseEntity<Pedido> saveWithDetails(@Valid @RequestBody PedidoWithDetailsRequest request) {
+        Pedido savedPedido = pedidoService.savePedidoWithDetails(request.getPedido(), request.getDetallesPedidos());
         return new ResponseEntity<>(savedPedido, HttpStatus.CREATED);
     }
 

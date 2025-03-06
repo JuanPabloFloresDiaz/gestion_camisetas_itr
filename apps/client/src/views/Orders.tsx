@@ -17,10 +17,12 @@ import {
 import { getPedidos } from "@/services/pedidos.service";
 import { Pedido } from "@/services/pedidos.service";
 import { ShoppingCart, Search, Loader2 } from "lucide-react";
+import CreatePedidoModal from "@/components/Modals/Pedidos/CreatePedido";
 
 export default function Pedidos() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const itemsPerPage = 5;
 
@@ -31,12 +33,12 @@ export default function Pedidos() {
 
   const filteredPedidos = pedidos
     ? pedidos.filter((pedido) => {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          pedido.fechaPedido.toLowerCase().includes(searchLower) ||
-          pedido.direccionPedido.toLowerCase().includes(searchLower)
-        );
-      })
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        pedido.fechaPedido.toLowerCase().includes(searchLower) ||
+        pedido.direccionPedido.toLowerCase().includes(searchLower)
+      );
+    })
     : [];
 
   const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage);
@@ -149,7 +151,7 @@ export default function Pedidos() {
             </div>
           )}
         </div>
-        <Button variant="default" className="bg-blue-800 text-white hover:bg-blue-600">
+        <Button variant="default" className="bg-blue-800 text-white hover:bg-blue-600" onClick={() => setIsModalOpen(true)}>
           Agregar Pedido
         </Button>
       </div>
@@ -235,11 +237,10 @@ export default function Pedidos() {
                       <Button
                         variant={currentPage === pageToShow ? "default" : "outline"}
                         size="icon"
-                        className={`w-9 h-9 ${
-                          currentPage === pageToShow
+                        className={`w-9 h-9 ${currentPage === pageToShow
                             ? "bg-blue-600 hover:bg-blue-700"
                             : "text-blue-700 border-blue-200 hover:bg-blue-50"
-                        }`}
+                          }`}
                         onClick={() => setCurrentPage(pageToShow)}
                       >
                         {pageToShow}
@@ -265,6 +266,11 @@ export default function Pedidos() {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
+
+          {/* <CreatePedidoModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          /> */}
         </div>
       )}
     </div>

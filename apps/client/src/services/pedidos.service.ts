@@ -2,12 +2,22 @@ import AxiosRequest from '../hooks/AxiosRequest';
 import { Method } from 'axios';
 
 const RESOURCE = 'pedidos';
+const RESOURCE_DETALLE = 'detail-pedidos';
 
 export interface Pedido {
   id: string;
   fechaPedido: Date;
-  direccionPedido: string;
+  direccionPedido?: string | null;
   cliente: object;
+  estadoPedido: string;
+}
+
+export interface DetallePedido {
+  id: string;
+  precioProducto: number;
+  cantidadComprada: number;
+  pedido: object;
+  detalleCamisa: Object;
 }
 
 // Función para mapear CRUD a métodos HTTP
@@ -51,4 +61,38 @@ export const updatePedido = async (id: string, payload: Pedido) => {
 // Eliminar un Pedido
 export const deletePedido = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('D'));
+};
+
+// Crear un Pedido con detalles
+export const createPedidoWithDetails = async (pedido: Pedido, detallesPedidos: DetallePedido[]) => {
+  const payload = {
+    pedido,
+    detallesPedidos
+  };
+  return await AxiosRequest(`/${RESOURCE}/with-details`, mapMethod('C'), payload);
+};
+
+// Crear un Detalle pedido
+export const createDetallePedido = async (payload: DetallePedido) => {
+  return await AxiosRequest(`/${RESOURCE_DETALLE}`, mapMethod('C'), payload);
+};
+
+// Obtener todos los detalles de Pedidos
+export const getDetallePedidos = async () => {
+  return await AxiosRequest(`/${RESOURCE_DETALLE}`, mapMethod('R'));
+};
+
+// Obtener un detalle pedido por ID
+export const getDetallePedido = async (id: string) => {
+  return await AxiosRequest(`/${RESOURCE_DETALLE}/${id}`, mapMethod('R'));
+};
+
+// Actualizar un detalle pedido
+export const updateDetallePedido = async (id: string, payload: DetallePedido) => {
+  return await AxiosRequest(`/${RESOURCE_DETALLE}/${id}`, mapMethod('U'), payload);
+};
+
+// Eliminar un detalle pedido
+export const deleteDetallePedido = async (id: string) => {
+  return await AxiosRequest(`/${RESOURCE_DETALLE}/${id}`, mapMethod('D'));
 };
