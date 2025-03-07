@@ -113,7 +113,7 @@ const Login: React.FC = () => {
             <p className="text-sm text-blue-700">© 2025 ITR-TeeManager. Todos los derechos reservados.</p>
             <div className="mt-4">
               <Image
-                src="/logoRicalAzul.avif"
+                src="/logoRical.avif"
                 alt="Logo de la empresa"
                 width={100}
                 height={40}

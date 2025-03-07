@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Pagination,
   PaginationContent,
@@ -13,39 +13,64 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationEllipsis,
-} from "@/components/ui/pagination";
-import { getPedidos } from "@/services/pedidos.service";
-import { Pedido } from "@/services/pedidos.service";
-import { ShoppingCart, Search, Loader2 } from "lucide-react";
-import CreatePedidoModal from "@/components/Modals/Pedidos/CreatePedido";
+} from "@/components/ui/pagination"
+import { getPedidos } from "@/services/pedidos.service"
+import { ShoppingCart, Search, Loader2, Eye } from "lucide-react"
+import CreatePedidoModal from "@/components/Modals/Pedidos/CreatePedido"
+import DetallePedidoModal from "@/components/Modals/Pedidos/DetallePedido"
 
 export default function Pedidos() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null)
+  const abrirModalDetalle = (pedido) => {
+    setPedidoSeleccionado(pedido)
+  }
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 5
 
-  const { data: pedidos, isLoading, isError } = useQuery({
+  const {
+    data: pedidos,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["pedidos"],
     queryFn: getPedidos,
-  });
+  })
 
-  const filteredPedidos = pedidos
-    ? pedidos.filter((pedido) => {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        pedido.fechaPedido.toLowerCase().includes(searchLower) ||
-        pedido.direccionPedido.toLowerCase().includes(searchLower)
-      );
-    })
-    : [];
+  const filteredPedidos = Array.isArray(pedidos)
+    ? pedidos
+        // Primero eliminar clientes duplicados
+        .filter(({ cliente }, index, self) => index === self.findIndex((c) => c.cliente?.id === cliente?.id))
+        // Luego extraer y mapear los pedidos
+        .flatMap(({ cliente }) => {
+          if (cliente?.pedidos) {
+            return cliente.pedidos.map((pedido) => ({
+              ...pedido,
+              cliente: `${cliente.nombre} ${cliente.apellido}`,
+              correo: cliente.correo,
+              telefono: cliente.telefono,
+              direccionPedido: pedido.direccionPedido || cliente.direccion,
+            }))
+          }
+          return []
+        })
+        // Eliminar posibles pedidos duplicados (por si acaso)
+        .filter((pedido, index, self) => index === self.findIndex((p) => p.id === pedido.id))
+        // Aplicar filtro de búsqueda
+        .filter((pedido) => {
+          const searchLower = searchTerm.toLowerCase()
+          return (
+            pedido.fechaPedido.toLowerCase().includes(searchLower) ||
+            (pedido.direccionPedido || "").toLowerCase().includes(searchLower) ||
+            pedido.cliente.toLowerCase().includes(searchLower)
+          )
+        })
+    : []
 
-  const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage);
-  const currentPedidos = filteredPedidos.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage)
+  const currentPedidos = filteredPedidos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   if (isLoading) {
     return (
@@ -61,7 +86,7 @@ export default function Pedidos() {
           <p className="text-blue-800 text-lg font-medium">Cargando pedidos...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (isError) {
@@ -103,7 +128,7 @@ export default function Pedidos() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -131,8 +156,8 @@ export default function Pedidos() {
             className="pl-10 border-blue-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm"
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
             }}
           />
           {searchTerm && (
@@ -142,8 +167,8 @@ export default function Pedidos() {
                 size="sm"
                 className="h-5 w-5 text-gray-400 hover:text-gray-600"
                 onClick={() => {
-                  setSearchTerm("");
-                  setCurrentPage(1);
+                  setSearchTerm("")
+                  setCurrentPage(1)
                 }}
               >
                 ×
@@ -151,8 +176,12 @@ export default function Pedidos() {
             </div>
           )}
         </div>
-        <Button variant="default" className="bg-blue-800 text-white hover:bg-blue-600" onClick={() => setIsModalOpen(true)}>
-          Agregar Pedido
+        <Button
+          className="bg-blue-700 text-white hover:bg-blue-800 transition-colors rounded-lg shadow-sm flex items-center space-x-2 px-4"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <span className="material-icons">add_circle</span>
+          <span> Agregar Pedido</span>
         </Button>
       </div>
 
@@ -161,27 +190,45 @@ export default function Pedidos() {
           <Table>
             <TableHeader>
               <TableRow className="bg-blue-600 hover:bg-blue-700">
+                <TableHead className="text-white font-medium">Cliente</TableHead>
+                <TableHead className="text-white font-medium">Correo</TableHead>
+                <TableHead className="text-white font-medium">Teléfono</TableHead>
                 <TableHead className="text-white font-medium">Dirección</TableHead>
                 <TableHead className="text-white font-medium">Fecha</TableHead>
+                <TableHead className="text-white font-medium">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {currentPedidos.length > 0 ? (
-                currentPedidos.map((pedido: Pedido) => (
+                currentPedidos.map((pedido) => (
                   <TableRow key={pedido.id} className="hover:bg-blue-50 transition-colors">
-                    <TableCell className="font-medium text-blue-900">{pedido.direccionPedido}</TableCell>
+                    <TableCell className="font-medium text-blue-900">{pedido.cliente}</TableCell>
+                    <TableCell className="text-gray-600">{pedido.correo}</TableCell>
+                    <TableCell className="text-gray-600">{pedido.telefono}</TableCell>
+                    <TableCell className="text-gray-600">{pedido.direccionPedido || "N/A"}</TableCell>
                     <TableCell className="text-gray-600">{new Date(pedido.fechaPedido).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
+                              onClick={() => abrirModalDetalle(pedido)}
+                            >
+                              <Eye className="h-5 w-5" />
+                              <span className="sr-only">Ver Detalles</span>
+                            </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={2} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                     {searchTerm ? (
                       <div className="flex flex-col items-center">
                         <Search className="h-8 w-8 text-gray-400 mb-2" />
                         <p>
-                          No se encontraron pedidos que coincidan con "
-                          <span className="font-medium">{searchTerm}</span>"
+                          No se encontraron pedidos que coincidan con "<span className="font-medium">{searchTerm}</span>
+                          "
                         </p>
                       </div>
                     ) : (
@@ -220,15 +267,15 @@ export default function Pedidos() {
               </PaginationItem>
 
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                let pageToShow;
+                let pageToShow
                 if (totalPages <= 5) {
-                  pageToShow = i + 1;
+                  pageToShow = i + 1
                 } else if (currentPage <= 3) {
-                  pageToShow = i + 1;
+                  pageToShow = i + 1
                 } else if (currentPage >= totalPages - 2) {
-                  pageToShow = totalPages - 4 + i;
+                  pageToShow = totalPages - 4 + i
                 } else {
-                  pageToShow = currentPage - 2 + i;
+                  pageToShow = currentPage - 2 + i
                 }
 
                 if (pageToShow > 0 && pageToShow <= totalPages) {
@@ -237,18 +284,19 @@ export default function Pedidos() {
                       <Button
                         variant={currentPage === pageToShow ? "default" : "outline"}
                         size="icon"
-                        className={`w-9 h-9 ${currentPage === pageToShow
+                        className={`w-9 h-9 ${
+                          currentPage === pageToShow
                             ? "bg-blue-600 hover:bg-blue-700"
                             : "text-blue-700 border-blue-200 hover:bg-blue-50"
-                          }`}
+                        }`}
                         onClick={() => setCurrentPage(pageToShow)}
                       >
                         {pageToShow}
                       </Button>
                     </PaginationItem>
-                  );
+                  )
                 }
-                return null;
+                return null
               })}
 
               {totalPages > 5 && currentPage < totalPages - 2 && (
@@ -266,13 +314,15 @@ export default function Pedidos() {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-
-          {/* <CreatePedidoModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          /> */}
+          <DetallePedidoModal
+            isOpen={pedidoSeleccionado !== null}
+            onClose={() => setPedidoSeleccionado(null)}
+            pedido={pedidoSeleccionado}
+          />
         </div>
       )}
+      <CreatePedidoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
-  );
+  )
 }
+

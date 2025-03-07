@@ -9,7 +9,7 @@ export interface Pedido {
   fechaPedido: Date;
   direccionPedido?: string | null;
   cliente: object;
-  estadoPedido: string;
+  estadoPedido?: 'Pendiente' | 'Entregado' | 'EnCamino' | 'Cancelado' | null;
 }
 
 export interface DetallePedido {
@@ -69,6 +69,7 @@ export const createPedidoWithDetails = async (pedido: Pedido, detallesPedidos: D
     pedido,
     detallesPedidos
   };
+  console.log(JSON.stringify(payload));
   return await AxiosRequest(`/${RESOURCE}/with-details`, mapMethod('C'), payload);
 };
 

@@ -77,7 +77,7 @@ export function CustomSidebar() {
       <div className="p-4 border-t border-blue-100 bg-white">
         <div className="flex flex-col items-center">
           <p className="text-xs text-blue-600 mb-2 font-medium">Desarrollada por</p>
-          <Image src="/logoRicalAzul.avif" alt="Logo de la empresa" width={100} height={40} className="rounded-lg" />
+          <Image src="/logoRical.avif" alt="Logo de la empresa" width={100} height={40} className="rounded-lg" />
         </div>
       </div>
     </aside>

@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "tb_pedidos")
 @EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Pedido extends BaseEntity {
 
     // Estado del pedido como Enum
@@ -22,7 +23,6 @@ public class Pedido extends BaseEntity {
         Cancelado
     }
 
-    @NotNull(message = "El estado del pedido es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_pedido", columnDefinition = "estado_pedido_enum DEFAULT 'Pendiente'")
     private EstadoPedido estadoPedido = EstadoPedido.Pendiente;

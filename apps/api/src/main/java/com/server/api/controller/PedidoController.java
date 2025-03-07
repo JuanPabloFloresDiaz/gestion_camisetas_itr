@@ -1,6 +1,7 @@
 package com.server.api.controller;
 
 import com.server.api.service.PedidoService;
+import com.server.api.dto.PedidoDTO;
 import com.server.api.model.Pedido;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +22,15 @@ public class PedidoController {
 
     // Obtener todos los pedidos
     @GetMapping
-    public ResponseEntity<List<Pedido>> findAll() {
-        List<Pedido> pedidos = pedidoService.findAll();
+    public ResponseEntity<List<PedidoDTO>> findAll() {
+        List<PedidoDTO> pedidos = pedidoService.findAll();
         return new ResponseEntity<>(pedidos, HttpStatus.OK);
     }
 
     // Obtener un pedido por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> findById(@PathVariable UUID id) {
-        Optional<Pedido> pedido = pedidoService.findById(id);
+    public ResponseEntity<PedidoDTO> findById(@PathVariable UUID id) {
+        Optional<PedidoDTO> pedido = pedidoService.findById(id);
         return pedido.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -43,7 +44,7 @@ public class PedidoController {
 
     // Crear un pedido con detalles
     @PostMapping("/with-details")
-    public ResponseEntity<Pedido> saveWithDetails(@Valid @RequestBody PedidoWithDetailsRequest request) {
+    public ResponseEntity<Pedido> saveWithDetails(@RequestBody PedidoWithDetailsRequest request) {
         Pedido savedPedido = pedidoService.savePedidoWithDetails(request.getPedido(), request.getDetallesPedidos());
         return new ResponseEntity<>(savedPedido, HttpStatus.CREATED);
     }

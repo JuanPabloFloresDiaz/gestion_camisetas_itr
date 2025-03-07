@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "tb_clientes")
 @EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Cliente extends BaseEntity {
 
     @NotBlank(message = "El nombre es obligatorio")
