@@ -63,7 +63,7 @@ export function CustomSidebar() {
         </div>
 
         {/* Botón de cerrar sesión */}
-        <Link href="/">
+        <Link href="/" onClick={() => localStorage.removeItem("jwtToken")}>
           <div className="flex items-center justify-between p-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 mt-2 border border-red-100 mx-1">
             <div className="flex items-center">
               <LogOut className="mr-3 h-5 w-5 text-red-500" />

@@ -25,6 +25,7 @@ export default function Pedidos() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null)
   const abrirModalDetalle = (pedido) => {
+    console.log(pedido)
     setPedidoSeleccionado(pedido)
   }
 

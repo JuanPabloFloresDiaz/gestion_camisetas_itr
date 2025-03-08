@@ -8,17 +8,40 @@ import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import Image from "next/image"
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react"
+import { useMutation } from "@tanstack/react-query"
+import { authentication } from "@/services/auth.service"
+import { toast } from "sonner"
 
 const Login: React.FC = () => {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+
+  const mutation = useMutation({
+    mutationFn: authentication,
+    onSuccess: (data) => {
+      localStorage.setItem("jwtToken", data.token)
+      router.push("/main/dashboard")
+      toast.success("Autenticación correcta")
+    },
+    onError: (error: any) => {
+      // Verificar si la respuesta contiene datos
+      const errorMessage = error.response?.data || error.message;
+      if (typeof errorMessage === 'string' && errorMessage.includes("Bad credentials")) {
+        toast.error("Credenciales incorrectas")
+      } else {
+        toast.error("Error al autenticar el usuario")
+      }
+      setError(errorMessage)
+    }
+  })
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    // Lógica de autenticación aquí...
-    router.push("/main/dashboard") // Redirige al dashboard
+    setError(null)
+    mutation.mutate({ correo: email, clave: password })
   }
 
   return (
