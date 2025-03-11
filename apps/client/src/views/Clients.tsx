@@ -29,28 +29,14 @@ export default function Clientes() {
 
   const itemsPerPage = 5;
 
-  const { data: clientes, isLoading, isError } = useQuery({
-    queryKey: ["clientes"],
-    queryFn: getClientees,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["clientes", currentPage, searchTerm],
+    queryFn: () => getClientees(currentPage, itemsPerPage, searchTerm),
   });
 
-  const filteredClientes = clientes
-    ? clientes.filter((cliente) => {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          cliente.nombre.toLowerCase().includes(searchLower) ||
-          cliente.apellido.toLowerCase().includes(searchLower) ||
-          cliente.correo.toLowerCase().includes(searchLower) ||
-          cliente.telefono.toLowerCase().includes(searchLower)
-        );
-      })
-    : [];
-
-  const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
-  const currentClientes = filteredClientes.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalItems = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+  const currentClientes = data?.data || [];
 
   const handleDeleteClick = (clienteId: string) => {
     setClienteToDelete(clienteId);
@@ -130,7 +116,7 @@ export default function Clientes() {
             Gestión de Clientes
           </h1>
           <p className="text-blue-100">
-            Total: <span className="font-bold">{filteredClientes.length}</span> clientes
+            Total: <span className="font-bold">{totalItems}</span> clientes
           </p>
         </div>
       </div>
@@ -169,7 +155,7 @@ export default function Clientes() {
         <div className="flex items-center gap-2">
           {searchTerm && (
             <span className="bg-blue-50 text-blue-700 border-blue-200 px-2 py-1 rounded">
-              {filteredClientes.length} resultados encontrados
+              {totalItems} resultados encontrados
             </span>
           )}
           <CreateClienteModal />
@@ -240,15 +226,15 @@ export default function Clientes() {
         </div>
       </Card>
 
-      {filteredClientes.length > 0 && (
+      {totalItems > 0 && (
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-blue-700 mb-4 md:mb-0">
             Mostrando{" "}
             <span className="font-medium">
-              {Math.min(filteredClientes.length, (currentPage - 1) * itemsPerPage + 1)}-
-              {Math.min(filteredClientes.length, currentPage * itemsPerPage)}
+              {Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(totalItems, currentPage * itemsPerPage)}
             </span>{" "}
-            de <span className="font-medium">{filteredClientes.length}</span> clientes
+            de <span className="font-medium">{totalItems}</span> clientes
           </p>
 
           <Pagination>

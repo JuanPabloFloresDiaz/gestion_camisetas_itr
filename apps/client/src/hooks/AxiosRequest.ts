@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, Method } from 'axios';
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
-const AxiosRequest = async (endpoint: string, method: Method, form: { [key: string]: any } = {}) => {
+const AxiosRequest = async (endpoint: string, method: Method, form: { [key: string]: any } = {}, params?: Record<string, any>) => {
   // Verificar si alguno de los valores en `form` es un archivo (instancia de File)
   const hasFile = Object.values(form).some((value) => value instanceof File);
 
@@ -34,6 +34,7 @@ const AxiosRequest = async (endpoint: string, method: Method, form: { [key: stri
     url: SERVER_URL + endpoint,
     headers: headers,
     data: data,
+    params: params,
   };
 
   // Depuración: Imprimir los datos y headers que se enviarán

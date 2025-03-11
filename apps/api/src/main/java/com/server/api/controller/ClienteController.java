@@ -1,11 +1,16 @@
 package com.server.api.controller;
+
 import com.server.api.service.ClienteService;
 import com.server.api.model.Cliente;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,9 +25,21 @@ public class ClienteController {
 
     // Obtener todos los clientes
     @GetMapping
-    public ResponseEntity<List<Cliente>> findAll() {
-        List<Cliente> clientes = clienteService.findAll();
-        return new ResponseEntity<>(clientes, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String search) {
+
+        Page<Cliente> clientesPage = clienteService.findAll(page, limit, search);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", clientesPage.getContent());
+        response.put("total", clientesPage.getTotalElements());
+        response.put("page", page);
+        response.put("limit", limit);
+        response.put("totalPages", clientesPage.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Obtener un cliente por ID

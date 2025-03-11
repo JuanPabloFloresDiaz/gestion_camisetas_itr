@@ -37,8 +37,17 @@ export const createCliente = async (payload: Omit<Cliente, "id">) => {
 };
 
 // Obtener todos los clientes
-export const getClientees = async () => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('R'));
+export const getClientees = async (page: number, limit: number, searchTerm?: string) => {
+  return await AxiosRequest(
+    `/${RESOURCE}`, 
+    mapMethod('R'), 
+    {},
+    { 
+      page,
+      limit,
+      search: searchTerm || undefined 
+    }
+  );
 };
 
 // Obtener un cliente por ID
