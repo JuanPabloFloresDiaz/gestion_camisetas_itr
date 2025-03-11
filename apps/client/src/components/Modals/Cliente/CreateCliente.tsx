@@ -48,10 +48,12 @@ export default function CreateClienteModal() {
 
   const onSubmit: SubmitHandler<ClienteFormValues> = async (data) => {
     try {
-      const newCliente = await createCliente(data);
-
-      queryClient.setQueryData(["clientes"], (oldData: Cliente[] | undefined) => {
-        return oldData ? [...oldData, newCliente] : [newCliente];
+      await createCliente(data);
+      
+      // Invalidar la caché para forzar nueva petición
+      await queryClient.invalidateQueries({ 
+        queryKey: ["clientes"],
+        refetchType: "active"
       });
 
       toast.success("Cliente creado", {

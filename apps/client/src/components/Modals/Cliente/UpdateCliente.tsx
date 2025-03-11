@@ -34,6 +34,7 @@ type ClienteFormValues = z.infer<typeof clienteSchema>;
 
 interface UpdateClienteModalProps {
   cliente: Cliente;
+  currentPage: number;
 }
 
 export default function UpdateClienteModal({ cliente }: UpdateClienteModalProps) {
@@ -61,12 +62,13 @@ export default function UpdateClienteModal({ cliente }: UpdateClienteModalProps)
   const onSubmit: SubmitHandler<ClienteFormValues> = async (data) => {
     try {
       const payload = { ...data, id: cliente.id };
-      const updatedCliente = await updateCliente(cliente.id, payload);
+      await updateCliente(cliente.id, payload);
 
-      queryClient.setQueryData(["clientes"], (oldData: Cliente[] | undefined) => {
-        return oldData
-          ? oldData.map((cliente) => (cliente.id === updatedCliente.id ? updatedCliente : cliente))
-          : [updatedCliente];
+      // Invalidar consulta y mantener scroll position
+      await queryClient.invalidateQueries({
+        queryKey: ["clientes"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 // <-- Añadir tipos
       });
 
       toast.success("Cliente actualizado", {
@@ -183,7 +185,7 @@ export default function UpdateClienteModal({ cliente }: UpdateClienteModalProps)
                         mask="00000000-0"
                         placeholder="DUI"
                         className="pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-                        defaultValue={cliente.dui}
+                        defaultValue={cliente.dui || ''} // <-- Manejar valores null
                         onAccept={(value) => setValue("dui", value)}
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-amber-500">

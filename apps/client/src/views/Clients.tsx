@@ -188,7 +188,7 @@ export default function Clientes() {
                     <TableCell className="text-gray-600">{cliente.direccion}</TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
-                        <UpdateClienteModal cliente={cliente} />
+                        <UpdateClienteModal cliente={cliente} currentPage={currentPage}/>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -299,7 +299,7 @@ export default function Clientes() {
       )}
 
       {deleteModalOpen && clienteToDelete && (
-        <DeleteClienteModal clienteId={clienteToDelete} onClose={handleCloseDeleteModal} />
+        <DeleteClienteModal clienteId={clienteToDelete} onClose={handleCloseDeleteModal} currentPage={currentPage}/>
       )}
     </div>
   );

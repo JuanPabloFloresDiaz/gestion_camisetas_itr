@@ -7,8 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCliente } from "@/services/clientes.service"; // Importar servicio de clientes
 
 interface DeleteClienteModalProps {
-  clienteId: string; // ID del cliente a eliminar
-  onClose: () => void; // Función para cerrar el modal
+  clienteId: string;
+  onClose: () => void;
+  currentPage: number;
 }
 
 export default function DeleteClienteModal({ clienteId, onClose }: DeleteClienteModalProps) {
@@ -19,7 +20,11 @@ export default function DeleteClienteModal({ clienteId, onClose }: DeleteCliente
     mutationFn: () => deleteCliente(clienteId), // Función para eliminar el cliente
     onSuccess: () => {
       // Invalida la caché de la lista de clientes para que se actualice
-      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+      queryClient.invalidateQueries({
+        queryKey: ["clientes"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 
+      });
       setIsDeleting(false);
       onClose(); // Cierra el modal después de eliminar
     },
