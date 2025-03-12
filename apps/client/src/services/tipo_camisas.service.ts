@@ -5,8 +5,8 @@ const RESOURCE = 'tipo-camisas';
 
 export interface TipoCamisa {
   id: string;
-  nombre: String;
-  descripcion: String;
+  nombre: string;
+  descripcion: string;
 }
 
 // Función para mapear CRUD a métodos HTTP
@@ -27,27 +27,36 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
   }
 };
 
-// Crear un TipoCamisa
-export const createTipoCamisa = async (payload: Omit<TipoCamisa, "id">) => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
+// Obtener todos los tipos de camisas con paginación
+export const getTipoCamisas = async (page: number, limit: number, searchTerm?: string) => {
+  return await AxiosRequest(
+    `/${RESOURCE}`,
+    mapMethod('R'),
+    {},
+    {
+      page,
+      limit,
+      search: searchTerm || undefined,
+    }
+  );
 };
 
-// Obtener todos los TipoCamisas
-export const getTipoCamisas = async () => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('R'));
-};
-
-// Obtener un TipoCamisa por ID
+// Obtener un tipo de camisa por ID
 export const getTipoCamisa = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('R'));
 };
 
-// Actualizar un TipoCamisa
+// Crear un tipo de camisa
+export const createTipoCamisa = async (payload: Omit<TipoCamisa, "id">) => {
+  return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
+};
+
+// Actualizar un tipo de camisa
 export const updateTipoCamisa = async (id: string, payload: TipoCamisa) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('U'), payload);
 };
 
-// Eliminar un TipoCamisa
+// Eliminar un tipo de camisa
 export const deleteTipoCamisa = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('D'));
 };

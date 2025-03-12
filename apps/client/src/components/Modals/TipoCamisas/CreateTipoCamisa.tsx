@@ -42,10 +42,12 @@ export default function CreateTipoCamisaModal() {
 
   const onSubmit: SubmitHandler<TipoCamisaFormValues> = async (data) => {
     try {
-      const newTipoCamisa = await createTipoCamisa(data);
+      await createTipoCamisa(data);
 
-      queryClient.setQueryData(["tipoCamisas"], (oldData: TipoCamisa[] | undefined) => {
-        return oldData ? [...oldData, newTipoCamisa] : [newTipoCamisa];
+      // Invalidar la caché para forzar nueva petición
+      await queryClient.invalidateQueries({
+        queryKey: ["tipoCamisas"],
+        refetchType: "active"
       });
 
       toast.success("Tipo de camisa creado", {

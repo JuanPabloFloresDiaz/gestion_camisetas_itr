@@ -9,6 +9,7 @@ import { deleteTipoCamisa } from "@/services/tipo_camisas.service"; // Importar 
 interface DeleteTipoCamisaModalProps {
   tipoCamisaId: string; // ID del tipo de camisa a eliminar
   onClose: () => void; // Función para cerrar el modal
+  currentPage: number;
 }
 
 export default function DeleteTipoCamisaModal({ tipoCamisaId, onClose }: DeleteTipoCamisaModalProps) {
@@ -19,7 +20,11 @@ export default function DeleteTipoCamisaModal({ tipoCamisaId, onClose }: DeleteT
     mutationFn: () => deleteTipoCamisa(tipoCamisaId), // Función para eliminar el tipo de camisa
     onSuccess: () => {
       // Invalida la caché de la lista de tipos de camisas para que se actualice
-      queryClient.invalidateQueries({ queryKey: ["tipoCamisas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["tipoCamisas"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 
+      });
       setIsDeleting(false);
       onClose(); // Cierra el modal después de eliminar
     },

@@ -1,28 +1,44 @@
 package com.server.api.controller;
+
 import com.server.api.service.TipoCamisaService;
 import com.server.api.model.TipoCamisa;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tipo-camisas")
 public class TipoCamisaController {
+
         private final TipoCamisaService tipoCamisaService;
 
         public TipoCamisaController(TipoCamisaService tipoCamisaService) {
                 this.tipoCamisaService = tipoCamisaService;
         }
 
-        // Obtener todos los tipos de camisas
+        // Obtener todos los tipos de camisas con paginación
         @GetMapping
-        public ResponseEntity<List<TipoCamisa>> findAll() {
-                List<TipoCamisa> tipoCamisas = tipoCamisaService.findAll();
-                return new ResponseEntity<>(tipoCamisas, HttpStatus.OK);
+        public ResponseEntity<Map<String, Object>> findAll(
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "5") int limit,
+                        @RequestParam(required = false) String search) {
+
+                Page<TipoCamisa> tipoCamisasPage = tipoCamisaService.findAll(page, limit, search);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("data", tipoCamisasPage.getContent());
+                response.put("total", tipoCamisasPage.getTotalElements());
+                response.put("page", page);
+                response.put("limit", limit);
+                response.put("totalPages", tipoCamisasPage.getTotalPages());
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
         // Obtener un tipo de camisa por ID

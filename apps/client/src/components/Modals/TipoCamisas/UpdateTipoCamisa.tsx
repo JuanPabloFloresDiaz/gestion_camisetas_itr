@@ -16,7 +16,7 @@ import {
 } from "@heroui/modal";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { number, z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -29,6 +29,7 @@ type TipoCamisaFormValues = z.infer<typeof tipoCamisaSchema>;
 
 interface UpdateTipoCamisaModalProps {
   tipoCamisa: TipoCamisa;
+  currentPage: number;
 }
 
 export default function UpdateTipoCamisaModal({ tipoCamisa }: UpdateTipoCamisaModalProps) {
@@ -51,12 +52,14 @@ export default function UpdateTipoCamisaModal({ tipoCamisa }: UpdateTipoCamisaMo
   const onSubmit: SubmitHandler<TipoCamisaFormValues> = async (data) => {
     try {
       const payload = { ...data, id: tipoCamisa.id };
-      const updatedTipoCamisa = await updateTipoCamisa(tipoCamisa.id, payload);
 
-      queryClient.setQueryData(["tipoCamisas"], (oldData: TipoCamisa[] | undefined) => {
-        return oldData
-          ? oldData.map((tipoCamisa) => (tipoCamisa.id === updatedTipoCamisa.id ? updatedTipoCamisa : tipoCamisa))
-          : [updatedTipoCamisa];
+      await updateTipoCamisa(tipoCamisa.id, payload);
+
+      // Invalidar consulta y mantener scroll position
+      await queryClient.invalidateQueries({
+        queryKey: ["tipoCamisas"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 // <-- Añadir tipos
       });
 
       toast.success("Tipo de camisa actualizado", {

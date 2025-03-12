@@ -29,23 +29,14 @@ export default function TipoCamisas() {
 
   const itemsPerPage = 5;
 
-  const { data: tipoCamisas, isLoading, isError } = useQuery({
-    queryKey: ["tipoCamisas"],
-    queryFn: getTipoCamisas,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tipoCamisas", currentPage, searchTerm],
+    queryFn: () => getTipoCamisas(currentPage, itemsPerPage, searchTerm),
   });
 
-  const filteredTipoCamisas = tipoCamisas
-    ? tipoCamisas.filter((tipoCamisa) => {
-        const searchLower = searchTerm.toLowerCase();
-        return tipoCamisa.nombre.toLowerCase().includes(searchLower);
-      })
-    : [];
-
-  const totalPages = Math.ceil(filteredTipoCamisas.length / itemsPerPage);
-  const currentTipoCamisas = filteredTipoCamisas.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalItems = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+  const currentTipoCamisas = data?.data || [];
 
   const handleDeleteClick = (tipoCamisaId: string) => {
     setTipoCamisaToDelete(tipoCamisaId);
@@ -125,7 +116,7 @@ export default function TipoCamisas() {
             Gestión de Tipos de Camisas
           </h1>
           <p className="text-blue-100">
-            Total: <span className="font-bold">{filteredTipoCamisas.length}</span> tipos de camisas
+            Total: <span className="font-bold">{totalItems}</span> tipos de camisas
           </p>
         </div>
       </div>
@@ -182,7 +173,7 @@ export default function TipoCamisas() {
                     <TableCell className="text-gray-600">{tipoCamisa.descripcion}</TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
-                        <UpdateTipoCamisaModal tipoCamisa={tipoCamisa} />
+                        <UpdateTipoCamisaModal tipoCamisa={tipoCamisa} currentPage={currentPage}/>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -220,15 +211,15 @@ export default function TipoCamisas() {
         </div>
       </Card>
 
-      {filteredTipoCamisas.length > 0 && (
+      {totalItems > 0 && (
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-blue-700 mb-4 md:mb-0">
             Mostrando{" "}
             <span className="font-medium">
-              {Math.min(filteredTipoCamisas.length, (currentPage - 1) * itemsPerPage + 1)}-
-              {Math.min(filteredTipoCamisas.length, currentPage * itemsPerPage)}
+              {Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(totalItems, currentPage * itemsPerPage)}
             </span>{" "}
-            de <span className="font-medium">{filteredTipoCamisas.length}</span> tipos de camisas
+            de <span className="font-medium">{totalItems}</span> tipos de camisas
           </p>
 
           <Pagination>
@@ -293,7 +284,7 @@ export default function TipoCamisas() {
       )}
 
       {deleteModalOpen && tipoCamisaToDelete && (
-        <DeleteTipoCamisaModal tipoCamisaId={tipoCamisaToDelete} onClose={handleCloseDeleteModal} />
+        <DeleteTipoCamisaModal tipoCamisaId={tipoCamisaToDelete} onClose={handleCloseDeleteModal} currentPage={currentPage}/>
       )}
     </div>
   );
