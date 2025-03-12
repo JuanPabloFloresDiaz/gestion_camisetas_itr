@@ -3,9 +3,11 @@ package com.server.api.service;
 import com.server.api.repository.AdministradorRepository;
 import com.server.api.model.Administrador;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,9 +22,13 @@ public class AdministradorService {
             this.passwordEncoder = passwordEncoder;
     }
 
-    // Obtener todos los administradores (no eliminados)
-    public List<Administrador> findAll() {
-        return administradorRepository.findAll();
+    // Obtener todos los administradores con paginación
+    public Page<Administrador> findAll(int page, int limit, String searchTerm) {
+        Pageable pageable = PageRequest.of(page - 1, limit); // Pagina base 1
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            return administradorRepository.searchAllFields(searchTerm.toLowerCase(), pageable);
+        }
+        return administradorRepository.findAll(pageable);
     }
 
     // Obtener un administrador por ID (no eliminado)

@@ -35,6 +35,7 @@ type AdminFormValues = z.infer<typeof adminSchema>;
 
 interface UpdateAdminModalProps {
   admin: Administrador;
+  currentPage: number;
 }
 
 export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
@@ -64,12 +65,13 @@ export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
   const onSubmit: SubmitHandler<AdminFormValues> = async (data) => {
     try {
       const payload = { ...data, id: admin.id };
-      const updatedAdmin = await updateAdministrador(admin.id, payload);
+      await updateAdministrador(admin.id, payload);
 
-      queryClient.setQueryData(["administradores"], (oldData: Administrador[] | undefined) => {
-        return oldData
-          ? oldData.map((admin) => (admin.id === updatedAdmin.id ? updatedAdmin : admin))
-          : [updatedAdmin];
+      // Invalidar consulta y mantener scroll position
+      await queryClient.invalidateQueries({
+        queryKey: ["administradores"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1
       });
 
       toast.success("Administrador actualizado", {
@@ -186,7 +188,7 @@ export default function UpdateAdminModal({ admin }: UpdateAdminModalProps) {
                         mask="00000000-0"
                         placeholder="DUI"
                         className="pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-                        defaultValue={admin.dui}
+                        defaultValue={admin.dui|| ''}
                         onAccept={(value) => setValue("dui", value)}
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-amber-500">

@@ -4,11 +4,14 @@ import com.server.api.service.AdministradorService;
 import com.server.api.model.Administrador;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.List;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,9 +27,21 @@ public class AdministradorController {
 
     // Obtener todos los administradores
     @GetMapping
-    public ResponseEntity<List<Administrador>> findAll() {
-        List<Administrador> administradores = administradorService.findAll();
-        return new ResponseEntity<>(administradores, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String search) {
+
+        Page<Administrador> adminsPage = administradorService.findAll(page, limit, search);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", adminsPage.getContent());
+        response.put("total", adminsPage.getTotalElements());
+        response.put("page", page);
+        response.put("limit", limit);
+        response.put("totalPages", adminsPage.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Obtener un administrador por ID

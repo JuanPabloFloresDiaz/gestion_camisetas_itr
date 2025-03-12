@@ -29,28 +29,14 @@ export default function Admin() {
 
   const itemsPerPage = 5;
 
-  const { data: admins, isLoading, isError } = useQuery({
-    queryKey: ["administradores"],
-    queryFn: getAdministradores,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["administradores", currentPage, searchTerm],
+    queryFn: () => getAdministradores(currentPage, itemsPerPage, searchTerm),
   });
 
-  const filteredAdmins = admins
-    ? admins.filter((admin) => {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          admin.nombre.toLowerCase().includes(searchLower) ||
-          admin.apellido.toLowerCase().includes(searchLower) ||
-          admin.correo.toLowerCase().includes(searchLower) ||
-          admin.telefono.toLowerCase().includes(searchLower)
-        );
-      })
-    : [];
-
-  const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
-  const currentAdmins = filteredAdmins.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalItems = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+  const currentAdmins = data?.data || [];
 
   const handleDeleteClick = (adminId: string) => {
     setAdminToDelete(adminId);
@@ -130,7 +116,7 @@ export default function Admin() {
             Gestión de Administradores
           </h1>
           <p className="text-blue-100">
-            Total: <span className="font-bold">{filteredAdmins.length}</span> administradores
+            Total: <span className="font-bold">{totalItems}</span> administradores
           </p>
         </div>
       </div>
@@ -169,7 +155,7 @@ export default function Admin() {
         <div className="flex items-center gap-2">
           {searchTerm && (
             <span className="bg-blue-50 text-blue-700 border-blue-200 px-2 py-1 rounded">
-              {filteredAdmins.length} resultados encontrados
+              {totalItems} resultados encontrados
             </span>
           )}
           <CreateAdminModal />
@@ -198,7 +184,7 @@ export default function Admin() {
                     <TableCell className="text-gray-600">{admin.telefono}</TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
-                        <UpdateAdminModal admin={admin} />
+                        <UpdateAdminModal admin={admin} currentPage={currentPage}/>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -236,15 +222,15 @@ export default function Admin() {
         </div>
       </Card>
 
-      {filteredAdmins.length > 0 && (
+      {totalItems > 0 && (
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-blue-700 mb-4 md:mb-0">
             Mostrando{" "}
             <span className="font-medium">
-              {Math.min(filteredAdmins.length, (currentPage - 1) * itemsPerPage + 1)}-
-              {Math.min(filteredAdmins.length, currentPage * itemsPerPage)}
+              {Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(totalItems, currentPage * itemsPerPage)}
             </span>{" "}
-            de <span className="font-medium">{filteredAdmins.length}</span> administradores
+            de <span className="font-medium">{totalItems}</span> administradores
           </p>
 
           <Pagination>
@@ -309,7 +295,7 @@ export default function Admin() {
       )}
 
       {deleteModalOpen && adminToDelete && (
-        <DeleteAdminModal adminId={adminToDelete} onClose={handleCloseDeleteModal} />
+        <DeleteAdminModal adminId={adminToDelete} onClose={handleCloseDeleteModal} currentPage={currentPage}/>
       )}
     </div>
   );

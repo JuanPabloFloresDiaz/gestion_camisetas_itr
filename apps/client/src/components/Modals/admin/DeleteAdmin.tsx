@@ -9,6 +9,7 @@ import { deleteAdministrador } from "@/services/administradores.service";
 interface DeleteAdminModalProps {
   adminId: string;
   onClose: () => void;
+  currentPage: number;
 }
 
 export default function DeleteAdminModal({ adminId, onClose }: DeleteAdminModalProps) {
@@ -19,7 +20,11 @@ export default function DeleteAdminModal({ adminId, onClose }: DeleteAdminModalP
     mutationFn: () => deleteAdministrador(adminId),
     onSuccess: () => {
       // Invalida la caché de la lista de administradores para que se actualice
-      queryClient.invalidateQueries({ queryKey: ["administradores"] });
+      queryClient.invalidateQueries({
+        queryKey: ["administradores"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 
+      });
       setIsDeleting(false);
       onClose(); // Cierra el modal después de eliminar
     },

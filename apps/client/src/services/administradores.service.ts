@@ -39,8 +39,17 @@ export const createAdministrador = async (payload: Omit<Administrador, "id">) =>
 };
 
 // Obtener todos los administradores
-export const getAdministradores = async () => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('R'));
+export const getAdministradores = async (page: number, limit: number, searchTerm?: string) => {
+  return await AxiosRequest(
+    `/${RESOURCE}`,
+    mapMethod('R'),
+    {},
+    {
+      page,
+      limit,
+      search: searchTerm || undefined,
+    }
+  );
 };
 
 // Obtener un administrador por ID

@@ -185,7 +185,7 @@ export default function UpdateClienteModal({ cliente }: UpdateClienteModalProps)
                         mask="00000000-0"
                         placeholder="DUI"
                         className="pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-                        defaultValue={cliente.dui || ''} // <-- Manejar valores null
+                        defaultValue={cliente.dui || ''}
                         onAccept={(value) => setValue("dui", value)}
                       />
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-amber-500">
