@@ -9,6 +9,7 @@ import { deleteTalla } from "@/services/tallas.service"; // Importar servicio de
 interface DeleteTallaModalProps {
   tallaId: string; // ID de la talla a eliminar
   onClose: () => void; // Función para cerrar el modal
+  currentPage: number;
 }
 
 export default function DeleteTallaModal({ tallaId, onClose }: DeleteTallaModalProps) {
@@ -19,7 +20,11 @@ export default function DeleteTallaModal({ tallaId, onClose }: DeleteTallaModalP
     mutationFn: () => deleteTalla(tallaId), // Función para eliminar la talla
     onSuccess: () => {
       // Invalida la caché de la lista de tallas para que se actualice
-      queryClient.invalidateQueries({ queryKey: ["tallas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["tallas"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 
+      });
       setIsDeleting(false);
       onClose(); // Cierra el modal después de eliminar
     },

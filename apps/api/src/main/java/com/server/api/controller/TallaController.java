@@ -1,29 +1,44 @@
 package com.server.api.controller;
+
 import com.server.api.service.TallaService;
 import com.server.api.model.Talla;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tallas")
 public class TallaController {
+
     private final TallaService tallaService;
 
     public TallaController(TallaService tallaService) {
         this.tallaService = tallaService;
     }
 
-    // Obtener todas las tallas
+    // Obtener todas las tallas con paginación
     @GetMapping
-    public ResponseEntity<List<Talla>> findAll() {
-        List<Talla> tallas = tallaService.findAll();
-        return new ResponseEntity<>(tallas, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String search) {
+
+        Page<Talla> tallasPage = tallaService.findAll(page, limit, search);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", tallasPage.getContent());
+        response.put("total", tallasPage.getTotalElements());
+        response.put("page", page);
+        response.put("limit", limit);
+        response.put("totalPages", tallasPage.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Obtener una talla por ID
@@ -35,7 +50,7 @@ public class TallaController {
     }
 
     // Crear una talla
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<Talla> save(@Valid @RequestBody Talla talla) {
         Talla savedTalla = tallaService.save(talla);
         return new ResponseEntity<>(savedTalla, HttpStatus.CREATED);

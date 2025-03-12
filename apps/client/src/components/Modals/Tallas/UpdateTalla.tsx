@@ -28,6 +28,7 @@ type TallaFormValues = z.infer<typeof tallaSchema>;
 
 interface UpdateTallaModalProps {
   talla: Talla;
+  currentPage: number;
 }
 
 export default function UpdateTallaModal({ talla }: UpdateTallaModalProps) {
@@ -49,14 +50,15 @@ export default function UpdateTallaModal({ talla }: UpdateTallaModalProps) {
   const onSubmit: SubmitHandler<TallaFormValues> = async (data) => {
     try {
       const payload = { ...data, id: talla.id };
-      const updatedTalla = await updateTalla(talla.id, payload);
+      await updateTalla(talla.id, payload);
 
-      queryClient.setQueryData(["tallas"], (oldData: Talla[] | undefined) => {
-        return oldData
-          ? oldData.map((talla) => (talla.id === updatedTalla.id ? updatedTalla : talla))
-          : [updatedTalla];
+      // Invalidar consulta y mantener scroll position
+      await queryClient.invalidateQueries({
+        queryKey: ["tallas"],
+        exact: false,
+        refetchPage: (page: number, index: number) => index === currentPage - 1 
       });
-
+      
       toast.success("Talla actualizada", {
         description: "La talla se ha actualizado correctamente.",
       });

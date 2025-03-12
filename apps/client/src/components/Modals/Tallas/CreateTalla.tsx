@@ -41,12 +41,13 @@ export default function CreateTallaModal() {
 
   const onSubmit: SubmitHandler<TallaFormValues> = async (data) => {
     try {
-      const newTalla = await createTalla(data);
-
-      queryClient.setQueryData(["tallas"], (oldData: Talla[] | undefined) => {
-        return oldData ? [...oldData, newTalla] : [newTalla];
+      await createTalla(data);
+      
+      // Invalidar la caché para forzar nueva petición
+      await queryClient.invalidateQueries({ 
+        queryKey: ["tallas"],
+        refetchType: "active"
       });
-
       toast.success("Talla creada", {
         description: "La talla se ha agregado correctamente.",
       });

@@ -29,23 +29,14 @@ export default function Tallas() {
 
   const itemsPerPage = 5;
 
-  const { data: tallas, isLoading, isError } = useQuery({
-    queryKey: ["tallas"],
-    queryFn: getTallas,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tallas", currentPage, searchTerm],
+    queryFn: () => getTallas(currentPage, itemsPerPage, searchTerm),
   });
 
-  const filteredTallas = tallas
-    ? tallas.filter((talla) => {
-        const searchLower = searchTerm.toLowerCase();
-        return talla.nombre.toLowerCase().includes(searchLower);
-      })
-    : [];
-
-  const totalPages = Math.ceil(filteredTallas.length / itemsPerPage);
-  const currentTallas = filteredTallas.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalItems = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+  const currentTallas = data?.data || [];
 
   const handleDeleteClick = (tallaId: string) => {
     setTallaToDelete(tallaId);
@@ -125,7 +116,7 @@ export default function Tallas() {
             Gestión de Tallas
           </h1>
           <p className="text-blue-100">
-            Total: <span className="font-bold">{filteredTallas.length}</span> tallas
+            Total: <span className="font-bold">{totalItems}</span> tallas
           </p>
         </div>
       </div>
@@ -180,7 +171,7 @@ export default function Tallas() {
                     <TableCell className="font-medium text-blue-900">{talla.nombre}</TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
-                        <UpdateTallaModal talla={talla} />
+                        <UpdateTallaModal talla={talla} currentPage={currentPage}/>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -218,15 +209,15 @@ export default function Tallas() {
         </div>
       </Card>
 
-      {filteredTallas.length > 0 && (
+      {totalItems > 0 && (
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-blue-700 mb-4 md:mb-0">
             Mostrando{" "}
             <span className="font-medium">
-              {Math.min(filteredTallas.length, (currentPage - 1) * itemsPerPage + 1)}-
-              {Math.min(filteredTallas.length, currentPage * itemsPerPage)}
+              {Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(totalItems, currentPage * itemsPerPage)}
             </span>{" "}
-            de <span className="font-medium">{filteredTallas.length}</span> tallas
+            de <span className="font-medium">{totalItems}</span> tallas
           </p>
 
           <Pagination>
@@ -291,7 +282,7 @@ export default function Tallas() {
       )}
 
       {deleteModalOpen && tallaToDelete && (
-        <DeleteTallaModal tallaId={tallaToDelete} onClose={handleCloseDeleteModal} />
+        <DeleteTallaModal tallaId={tallaToDelete} onClose={handleCloseDeleteModal} currentPage={currentPage}/>
       )}
     </div>
   );
