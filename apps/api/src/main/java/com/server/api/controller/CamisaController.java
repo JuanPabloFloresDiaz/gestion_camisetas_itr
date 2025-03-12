@@ -1,11 +1,14 @@
 package com.server.api.controller;
+
 import com.server.api.service.CamisaService;
 import com.server.api.model.Camisa;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,11 +22,23 @@ public class CamisaController {
         this.camisaService = camisaService;
     }
 
-    // Obtener todas las camisas
+    // Obtener todas las camisas con paginación
     @GetMapping
-    public ResponseEntity<List<Camisa>> findAll() {
-        List<Camisa> camisas = camisaService.findAll();
-        return new ResponseEntity<>(camisas, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(required = false) String search) {
+
+        Page<Camisa> camisasPage = camisaService.findAll(page, limit, search);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", camisasPage.getContent());
+        response.put("total", camisasPage.getTotalElements());
+        response.put("page", page);
+        response.put("limit", limit);
+        response.put("totalPages", camisasPage.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Obtener una camisa por ID
@@ -43,7 +58,7 @@ public class CamisaController {
 
     // Actualizar una camisa
     @PutMapping("/{id}")
-    public ResponseEntity<Camisa> update(@PathVariable UUID id, @RequestBody Camisa camisa) {
+    public ResponseEntity<Camisa> update(@PathVariable UUID id, @Valid @RequestBody Camisa camisa) {
         camisa.setId(id); // Asegúrate de que el ID coincida
         Camisa updatedCamisa = camisaService.update(camisa);
         return new ResponseEntity<>(updatedCamisa, HttpStatus.OK);

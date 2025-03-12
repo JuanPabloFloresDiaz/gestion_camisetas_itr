@@ -32,27 +32,36 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
   }
 };
 
-// Crear un camisa
-export const createCamisa = async (payload: Omit<Camisa, "id">) => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
+// Obtener todas las camisas con paginación
+export const getCamisas = async (page: number, limit: number, searchTerm?: string) => {
+  return await AxiosRequest(
+    `/${RESOURCE}`,
+    mapMethod('R'),
+    {},
+    {
+      page,
+      limit,
+      search: searchTerm || undefined,
+    }
+  );
 };
 
-// Obtener todos los camisas
-export const getCamisas = async () => {
-  return await AxiosRequest(`/${RESOURCE}`, mapMethod('R'));
-};
-
-// Obtener un camisa por ID
+// Obtener una camisa por ID
 export const getCamisa = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('R'));
 };
 
-// Actualizar un camisa
+// Crear una camisa
+export const createCamisa = async (payload: Omit<Camisa, "id">) => {
+  return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
+};
+
+// Actualizar una camisa
 export const updateCamisa = async (id: string, payload: Omit<Camisa, "administrador">) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('U'), payload);
 };
 
-// Eliminar un camisa
+// Eliminar una camisa
 export const deleteCamisa = async (id: string) => {
   return await AxiosRequest(`/${RESOURCE}/${id}`, mapMethod('D'));
 };

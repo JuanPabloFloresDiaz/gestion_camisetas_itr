@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -14,55 +14,42 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationEllipsis,
-} from "@/components/ui/pagination"
-import { getCamisas } from "@/services/camisas.service"
-import type { Camisa } from "@/services/camisas.service"
-import CreateCamisaModal from "@/components/Modals/Camisas/CreateCamisa"
-import UpdateCamisaModal from "@/components/Modals/Camisas/UpdateCamisa"
-import DeleteCamisaModal from "@/components/Modals/Camisas/DeleteCamisa"
-import DetalleCamisaModal from "@/components/Modals/Camisas/DetalleCamisa"
-import { Shirt, Search, Edit, Trash2, Eye, Loader2 } from "lucide-react"
+} from "@/components/ui/pagination";
+import { getCamisas } from "@/services/camisas.service";
+import type { Camisa } from "@/services/camisas.service";
+import CreateCamisaModal from "@/components/Modals/Camisas/CreateCamisa";
+import UpdateCamisaModal from "@/components/Modals/Camisas/UpdateCamisa";
+import DeleteCamisaModal from "@/components/Modals/Camisas/DeleteCamisa";
+import DetalleCamisaModal from "@/components/Modals/Camisas/DetalleCamisa";
+import { Shirt, Search, Trash2, Loader2 } from "lucide-react";
 
 export default function Camisas() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [camisaToDelete, setCamisaToDelete] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [camisaToDelete, setCamisaToDelete] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const itemsPerPage = 5
+  const itemsPerPage = 5;
 
-  const {
-    data: camisas,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["camisas"],
-    queryFn: getCamisas,
-  })
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["camisas", currentPage, searchTerm],
+    queryFn: () => getCamisas(currentPage, itemsPerPage, searchTerm),
+  });
 
-  const filteredCamisas = camisas
-    ? camisas.filter((camisa) => {
-        const searchLower = searchTerm.toLowerCase()
-        return (
-          camisa.nombre.toLowerCase().includes(searchLower) || camisa.descripcion.toLowerCase().includes(searchLower)
-        )
-      })
-    : []
-
-  const totalPages = Math.ceil(filteredCamisas.length / itemsPerPage)
-  const currentCamisas = filteredCamisas.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const totalItems = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+  const currentCamisas = data?.data || [];
 
   const handleDeleteClick = (camisaId: string) => {
-    setCamisaToDelete(camisaId)
-    setDeleteModalOpen(true)
-  }
+    setCamisaToDelete(camisaId);
+    setDeleteModalOpen(true);
+  };
 
   const handleCloseDeleteModal = () => {
-    setDeleteModalOpen(false)
-    setCamisaToDelete(null)
-  }
+    setDeleteModalOpen(false);
+    setCamisaToDelete(null);
+  };
 
-  // Componente para el estado de carga
   if (isLoading) {
     return (
       <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
@@ -77,10 +64,9 @@ export default function Camisas() {
           <p className="text-blue-800 text-lg font-medium">Cargando camisas...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  // Componente para el estado de error
   if (isError) {
     return (
       <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
@@ -120,12 +106,11 @@ export default function Camisas() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-b from-white to-blue-50">
-      {/* Header con gradiente */}
       <div className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-8 shadow-md">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h1 className="text-2xl font-bold text-white flex items-center">
@@ -133,12 +118,11 @@ export default function Camisas() {
             Gestión de Camisas
           </h1>
           <p className="text-blue-100">
-            Total: <span className="font-bold">{filteredCamisas.length}</span> camisas
+            Total: <span className="font-bold">{totalItems}</span> camisas
           </p>
         </div>
       </div>
 
-      {/* Buscador y botón de agregar */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div className="relative w-full md:w-1/2">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -150,8 +134,8 @@ export default function Camisas() {
             className="pl-10 border-blue-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-sm"
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setCurrentPage(1)
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
             }}
           />
           {searchTerm && (
@@ -161,8 +145,8 @@ export default function Camisas() {
                 size="sm"
                 className="h-5 w-5 text-gray-400 hover:text-gray-600"
                 onClick={() => {
-                  setSearchTerm("")
-                  setCurrentPage(1)
+                  setSearchTerm("");
+                  setCurrentPage(1);
                 }}
               >
                 ×
@@ -170,18 +154,9 @@ export default function Camisas() {
             </div>
           )}
         </div>
-
-        <div className="flex items-center gap-2">
-          {searchTerm && (
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-              {filteredCamisas.length} resultados encontrados
-            </Badge>
-          )}
-          <CreateCamisaModal />
-        </div>
+        <CreateCamisaModal />
       </div>
 
-      {/* Tabla de camisas */}
       <Card className="border-blue-100 shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -214,8 +189,8 @@ export default function Camisas() {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
-                        <UpdateCamisaModal camisa={camisa}/>
-                        <DetalleCamisaModal camisa={camisa}/>
+                        <UpdateCamisaModal camisa={camisa} />
+                        <DetalleCamisaModal camisa={camisa} />
                         <Button
                           variant="ghost"
                           size="sm"
@@ -235,8 +210,8 @@ export default function Camisas() {
                       <div className="flex flex-col items-center">
                         <Search className="h-8 w-8 text-gray-400 mb-2" />
                         <p>
-                          No se encontraron camisas que coincidan con "<span className="font-medium">{searchTerm}</span>
-                          "
+                          No se encontraron camisas que coincidan con "
+                          <span className="font-medium">{searchTerm}</span>"
                         </p>
                       </div>
                     ) : (
@@ -253,16 +228,15 @@ export default function Camisas() {
         </div>
       </Card>
 
-      {/* Paginación mejorada */}
-      {filteredCamisas.length > 0 && (
+      {totalItems > 0 && (
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-blue-700 mb-4 md:mb-0">
             Mostrando{" "}
             <span className="font-medium">
-              {Math.min(filteredCamisas.length, (currentPage - 1) * itemsPerPage + 1)}-
-              {Math.min(filteredCamisas.length, currentPage * itemsPerPage)}
+              {Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1)}-
+              {Math.min(totalItems, currentPage * itemsPerPage)}
             </span>{" "}
-            de <span className="font-medium">{filteredCamisas.length}</span> camisas
+            de <span className="font-medium">{totalItems}</span> camisas
           </p>
 
           <Pagination>
@@ -275,18 +249,16 @@ export default function Camisas() {
                 />
               </PaginationItem>
 
-              {/* Números de página */}
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                // Lógica para mostrar las páginas cercanas a la actual
-                let pageToShow
+                let pageToShow;
                 if (totalPages <= 5) {
-                  pageToShow = i + 1
+                  pageToShow = i + 1;
                 } else if (currentPage <= 3) {
-                  pageToShow = i + 1
+                  pageToShow = i + 1;
                 } else if (currentPage >= totalPages - 2) {
-                  pageToShow = totalPages - 4 + i
+                  pageToShow = totalPages - 4 + i;
                 } else {
-                  pageToShow = currentPage - 2 + i
+                  pageToShow = currentPage - 2 + i;
                 }
 
                 if (pageToShow > 0 && pageToShow <= totalPages) {
@@ -295,19 +267,18 @@ export default function Camisas() {
                       <Button
                         variant={currentPage === pageToShow ? "default" : "outline"}
                         size="icon"
-                        className={`w-9 h-9 ${
-                          currentPage === pageToShow
+                        className={`w-9 h-9 ${currentPage === pageToShow
                             ? "bg-blue-600 hover:bg-blue-700"
                             : "text-blue-700 border-blue-200 hover:bg-blue-50"
-                        }`}
+                          }`}
                         onClick={() => setCurrentPage(pageToShow)}
                       >
                         {pageToShow}
                       </Button>
                     </PaginationItem>
-                  )
+                  );
                 }
-                return null
+                return null;
               })}
 
               {totalPages > 5 && currentPage < totalPages - 2 && (
@@ -332,6 +303,5 @@ export default function Camisas() {
         <DeleteCamisaModal camisaId={camisaToDelete} onClose={handleCloseDeleteModal} />
       )}
     </div>
-  )
+  );
 }
-
