@@ -26,6 +26,11 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
   }
 };
 
+// Obtener todas las tallas sin paginación
+export const getAllTallas = async () => {
+  return await AxiosRequest(`/${RESOURCE}/all`, mapMethod('R'));
+}
+
 // Obtener todas las tallas con paginación
 export const getTallas = async (page: number, limit: number, searchTerm?: string) => {
   return await AxiosRequest(

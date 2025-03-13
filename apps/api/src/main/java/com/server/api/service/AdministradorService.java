@@ -31,6 +31,11 @@ public class AdministradorService {
         return administradorRepository.findAll(pageable);
     }
 
+    // Obtener todos los administradores sin paginación
+    public Iterable<Administrador> findAll() {
+        return administradorRepository.findAll();
+    }
+
     // Obtener un administrador por ID (no eliminado)
     public Optional<Administrador> findById(UUID id) {
         return administradorRepository.findById(id);

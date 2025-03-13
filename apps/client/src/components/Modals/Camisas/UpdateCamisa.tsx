@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useQueryClient, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { getTipoCamisas } from "@/services/tipo_camisas.service"
+import { getAllTipoCamisas } from "@/services/tipo_camisas.service"
 
 const camisaUpdateSchema = z.object({
   nombre: z.string().min(1, "Nombre obligatorio").max(50),
@@ -54,7 +54,7 @@ export default function UpdateCamisaModal({ camisa }: UpdateCamisaModalProps) {
 
   const { data: tipoCamisas } = useQuery({
     queryKey: ["tipoCamisas"],
-    queryFn: getTipoCamisas,
+    queryFn: getAllTipoCamisas,
   })
 
   useEffect(() => {

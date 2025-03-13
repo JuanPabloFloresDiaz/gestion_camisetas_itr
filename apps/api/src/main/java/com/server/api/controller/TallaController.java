@@ -22,6 +22,13 @@ public class TallaController {
         this.tallaService = tallaService;
     }
 
+    // Obtener todas las tallas sin paginación
+    @GetMapping("/all")
+    public ResponseEntity<Iterable<Talla>> findAll() {
+        Iterable<Talla> tallas = tallaService.findAll();
+        return new ResponseEntity<>(tallas, HttpStatus.OK);
+    }
+
     // Obtener todas las tallas con paginación
     @GetMapping
     public ResponseEntity<Map<String, Object>> findAll(

@@ -22,6 +22,13 @@ public class TipoCamisaController {
                 this.tipoCamisaService = tipoCamisaService;
         }
 
+        // Obtener todos los tipos de camisas sin paginación
+        @GetMapping("/all")
+        public ResponseEntity<Iterable<TipoCamisa>> findAll() {
+                Iterable<TipoCamisa> tipoCamisas = tipoCamisaService.findAll();
+                return new ResponseEntity<>(tipoCamisas, HttpStatus.OK);
+        }
+
         // Obtener todos los tipos de camisas con paginación
         @GetMapping
         public ResponseEntity<Map<String, Object>> findAll(

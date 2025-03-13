@@ -13,8 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useQueryClient, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { getAdministradores } from "@/services/administradores.service"
-import { getTipoCamisas } from "@/services/tipo_camisas.service"
+import { getAllAdministradores } from "@/services/administradores.service"
+import { getAllTipoCamisas } from "@/services/tipo_camisas.service"
 
 const camisaSchema = z.object({
   nombre: z.string().min(1, "Nombre obligatorio").max(50),
@@ -47,12 +47,12 @@ export default function CreateCamisaModal() {
 
   const { data: administradores } = useQuery({
     queryKey: ["administradores"],
-    queryFn: getAdministradores,
+    queryFn: getAllAdministradores,
   })
 
   const { data: tipoCamisas } = useQuery({
     queryKey: ["tipoCamisas"],
-    queryFn: getTipoCamisas,
+    queryFn: getAllTipoCamisas,
   })
 
   const onSubmit: SubmitHandler<CamisaFormValues> = async (data) => {

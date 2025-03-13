@@ -27,6 +27,11 @@ const mapMethod = (method: 'C' | 'R' | 'U' | 'D' | 'P'): Method => {
   }
 };
 
+// Obtener todos los tipos de camisas sin paginación
+export const getAllTipoCamisas = async () => {
+  return await AxiosRequest(`/${RESOURCE}/all`, mapMethod('R'));
+}
+
 // Obtener todos los tipos de camisas con paginación
 export const getTipoCamisas = async (page: number, limit: number, searchTerm?: string) => {
   return await AxiosRequest(

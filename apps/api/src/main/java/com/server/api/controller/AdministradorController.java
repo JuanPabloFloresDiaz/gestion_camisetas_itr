@@ -25,7 +25,7 @@ public class AdministradorController {
         this.administradorService = administradorService;
     }
 
-    // Obtener todos los administradores
+    // Obtener todos los administradores con paginación
     @GetMapping
     public ResponseEntity<Map<String, Object>> findAll(
             @RequestParam(defaultValue = "1") int page,
@@ -42,6 +42,13 @@ public class AdministradorController {
         response.put("totalPages", adminsPage.getTotalPages());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Obtener todos los administradores sin paginación
+    @GetMapping("/all")
+    public ResponseEntity<Iterable<Administrador>> findAll() {
+        Iterable<Administrador> administradores = administradorService.findAll();
+        return new ResponseEntity<>(administradores, HttpStatus.OK);
     }
 
     // Obtener un administrador por ID

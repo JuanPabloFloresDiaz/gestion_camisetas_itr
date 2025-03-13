@@ -18,6 +18,11 @@ public class TallaService {
         this.tallaRepository = tallaRepository;
     }
 
+    // Obtener todas las tallas sin paginación
+    public Iterable<Talla> findAll() {
+        return tallaRepository.findAll();
+    }
+
     // Obtener todas las tallas con paginación
     public Page<Talla> findAll(int page, int limit, String searchTerm) {
         Pageable pageable = PageRequest.of(page - 1, limit); // Pagina base 1

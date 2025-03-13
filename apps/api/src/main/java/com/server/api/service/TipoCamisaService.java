@@ -18,6 +18,11 @@ public class TipoCamisaService {
         this.tipoCamisaRepository = tipoCamisaRepository;
     }
 
+    //  Obtener todos los tipos de camisas sin paginación
+    public Iterable<TipoCamisa> findAll() {
+        return tipoCamisaRepository.findAll();
+    }
+
     // Obtener todos los tipos de camisas con paginación
     public Page<TipoCamisa> findAll(int page, int limit, String searchTerm) {
         Pageable pageable = PageRequest.of(page - 1, limit); // Pagina base 1

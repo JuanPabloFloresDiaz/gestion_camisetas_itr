@@ -38,7 +38,12 @@ export const createAdministrador = async (payload: Omit<Administrador, "id">) =>
   return await AxiosRequest(`/${RESOURCE}`, mapMethod('C'), payload);
 };
 
-// Obtener todos los administradores
+// Obtener todos los administradores sin paginación
+export const getAllAdministradores = async () => {
+  return await AxiosRequest(`/${RESOURCE}/all`, mapMethod('R'));
+}
+
+// Obtener todos los administradores con paginación
 export const getAdministradores = async (page: number, limit: number, searchTerm?: string) => {
   return await AxiosRequest(
     `/${RESOURCE}`,

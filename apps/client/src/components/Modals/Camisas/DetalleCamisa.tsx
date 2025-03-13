@@ -7,7 +7,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@herou
 import Image from "next/image"
 import { useQueryClient, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { getTallas } from "@/services/tallas.service"
+import { getAllTallas } from "@/services/tallas.service"
 import {
   searchDetalleCamisasByCamisa,
   createDetalleCamisas,
@@ -28,7 +28,7 @@ export default function DetalleCamisasModal({ camisa }: DetalleCamisaModalProps)
   // Obtener todas las tallas disponibles
   const { data: tallas } = useQuery({
     queryKey: ["tallas"],
-    queryFn: getTallas,
+    queryFn: getAllTallas,
   })
 
   // Obtener detalles existentes para la camisa
